@@ -2,13 +2,13 @@
 
 ## Equipe
 
-- Integrante 1:
-- Integrante 2, se houver:
+- Integrante 1: Victor Henrique Rezende Andrade
+- Integrante 2: 
 
 ## Variante
 
-- Variante:
-- Regra específica:
+- Variante: Quadras Esportivas
+- Regra específica: Compatibilidade de modalidade - cada quadra possui uma lista de modalidades permitidas; o sistema recusa reservas com modalidade incompatível.
 
 ## Requisitos atendidos
 
