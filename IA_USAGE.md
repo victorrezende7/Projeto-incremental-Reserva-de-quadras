@@ -32,3 +32,13 @@ documentação ou decisões.
 - Correções ou decisões da equipe: adaptação do texto sugerido ao vocabulário do
   enunciado; decisão de manter apenas a compatibilidade de modalidade como regra própria
   inicial.
+
+## Uso
+- Data: 01/10/2026
+- Ferramenta: Claude e chat-gpt
+- Objetivo: Entender a classe Enum e como usar Set.
+- Parte do projeto afetada: Implementar na classe quadra para as modalidades permitidas
+- Resultado aproveitado:
+- Verificações executadas:
+- Correções ou decisões da equipe:
+
