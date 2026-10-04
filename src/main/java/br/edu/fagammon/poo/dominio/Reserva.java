@@ -1,6 +1,6 @@
 package br.edu.fagammon.poo.dominio;
 
-import java.util.EnumSet;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Reserva {
@@ -25,12 +25,12 @@ public class Reserva {
         if(!quadra.aceitaModalidade(modalidade)){
             throw new IllegalArgumentException("Modalidade não permitida na quadra reservada");
         }
-        if(quadra.isAtiva() == false){
+        if(!quadra.isAtiva()){
             throw new IllegalArgumentException("Quadra desativada não pode ser reservada");
         }
         this.idReserva = UUID.randomUUID().toString();
         this.participante = participante;
-        this. quadra = quadra;
+        this.quadra = quadra;
         this.periodoReserva = periodoReserva;
         this.modalidade = modalidade;
         this.statusReserva = StatusReserva.CONFIRMADA;
@@ -44,5 +44,24 @@ public class Reserva {
         return participante;
     }
 
+    public Quadra getQuadra(){return quadra;}
 
+    public PeriodoReserva getPeriodoReserva(){return periodoReserva;}
+
+    public Modalidade getModalidade(){return modalidade;}
+
+    public StatusReserva getStatusReserva(){return statusReserva;}
+
+
+    @Override
+    public boolean equals(Object o){
+        if(o == null || getClass() != o.getClass()) return false;
+        Reserva reserva = (Reserva) o;
+        return Objects.equals(idReserva, reserva.idReserva);
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hashCode(idReserva);
+    }
 }

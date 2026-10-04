@@ -35,10 +35,17 @@ documentação ou decisões.
 
 ## Uso
 - Data: 01/10/2026
-- Ferramenta: Claude e chat-gpt
+- Ferramenta:  chat-gpt
 - Objetivo: Entender a classe Enum e como usar Set.
 - Parte do projeto afetada: Implementar na classe quadra para as modalidades permitidas
 - Resultado aproveitado:
 - Verificações executadas:
 - Correções ou decisões da equipe:
+
+
+## Uso
+- Data:01/10/2026
+- Ferramenta: chat-gpt
+- Objetivo: Gerar ids automaticos para reservas
+- Parte do projeto afetada: Classe Reserva
 
