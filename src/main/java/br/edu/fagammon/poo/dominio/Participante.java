@@ -17,7 +17,7 @@ public class Participante {
         this.nome = nome;
     }
 
-    public String  getID() {
+    public String  getId() {
         return idParticipante;
     }
 

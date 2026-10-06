@@ -10,7 +10,7 @@ public class ParticipanteTest {
     void deveCriarParticipanteValido() {
         Participante participante = new Participante("01", "Victor");
 
-        assertEquals("01", participante.getID());
+        assertEquals("01", participante.getId());
         assertEquals("Victor", participante.getNome());
     }
 

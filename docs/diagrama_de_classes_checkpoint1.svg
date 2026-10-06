@@ -1,0 +1,287 @@
+<svg version="1.1" baseProfile="full" width="1448.0" height="952.0" viewBox="0 0 1448 952" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
+	<desc >#direction: down
+	#spacing: 45
+	#gutter: 25
+	#edgeMargin: 6
+	#fontSize: 13
+	#lineWidth: 1.2
+	#bendSize: 0.3
+	
+	[Quadra|
+	-id: String;
+	-nome: String;
+	-modalidadesPermitidas: Set~Modalidade~;
+	-ativa: boolean
+	|
+	+getId(): String;
+	+getNome(): String;
+	+aceitaModalidade(modalidade: Modalidade): boolean;
+	+ativar(): void;
+	+desativar(): void;
+	+isAtiva(): boolean;
+	+getModalidadesPermitidas(): Set~Modalidade~;
+	+equals(o: Object): boolean;
+	+hashCode(): int
+	]
+	
+	[Participante|
+	-idParticipante: String;
+	-nome: String
+	|
+	+getID(): String;
+	+getNome(): String;
+	+equals(o: Object): boolean;
+	+hashCode(): int
+	]
+	
+	[&lt;valueObject&gt; PeriodoReserva|
+	+inicio: LocalDateTime;
+	+fim: LocalDateTime
+	|
+	+sobrepoe(outro: PeriodoReserva): boolean
+	]
+	
+	[Reserva|
+	-idReserva: String;
+	-participante: Participante;
+	-quadra: Quadra;
+	-periodoReserva: PeriodoReserva;
+	-modalidade: Modalidade;
+	-statusReserva: StatusReserva
+	|
+	+getId(): String;
+	+getParticipante(): Participante;
+	+getQuadra(): Quadra;
+	+getPeriodoReserva(): PeriodoReserva;
+	+getModalidade(): Modalidade;
+	+getStatusReserva(): StatusReserva;
+	+equals(o: Object): boolean;
+	+hashCode(): int
+	]
+	
+	[&lt;enumeration&gt; Modalidade|
+	FUTSAL;
+	VOLEIBOL;
+	BASQUETE;
+	TENIS;
+	HANDEBOL;
+	SOCIETY
+	]
+	
+	[&lt;enumeration&gt; StatusReserva|
+	CONFIRMADA;
+	CANCELADA;
+	CONCLUIDA
+	]
+	
+	[Reserva] o-&gt; [Quadra]
+	[Reserva] o-&gt; [Participante]
+	[Reserva] +-&gt; [PeriodoReserva]
+	[Reserva] -&gt; [Modalidade]
+	[Reserva] -&gt; [StatusReserva]
+	[Quadra] -&gt; [Modalidade]
+	</desc>
+	<g stroke-width="1.0" text-align="left" font="12pt Helvetica, Arial, sans-serif" font-size="13pt" font-family="Helvetica" font-weight="normal" font-style="normal">
+		<g font-family="Helvetica" font-size="13pt" font-weight="bold" font-style="normal" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" stroke="#33322E">
+			<g stroke="transparent" fill="transparent">
+				<rect x="0.0" y="0.0" height="952.0" width="1448.0" stroke="none"></rect>
+			</g>
+			<g transform="translate(53, 8)" fill="#33322E">
+				<g transform="translate(25, 25)" fill="#33322E" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal">
+					<path d="M655.7 214.7 L1114 345.5 L1114 360.5 L1114.0 360.5 " fill="none"></path>
+					<path d="M1108.0 353.0 L1114.0 360.5 L1120.0 353.0 L1114.0 368.0 Z"></path>
+					<g fill="#eee8d5">
+						<path d="M647.2 206.0 L655.7 214.7 L643.9 217.5 L635.5 208.9 Z"></path>
+					</g>
+					<path d="M284.9 258.8 L120.5 345.5 L120.5 422 L120.5 422.0 " fill="none"></path>
+					<path d="M114.5 414.5 L120.5 422.0 L126.5 414.5 L120.5 429.5 Z"></path>
+					<g fill="#eee8d5">
+						<path d="M297.0 259.2 L284.9 258.8 L291.4 248.6 L303.5 249.0 Z"></path>
+					</g>
+					<path d="M469.5 344.0 L469.5 345.5 L469.5 448 L469.5 448.0 " fill="none"></path>
+					<path d="M463.5 440.5 L469.5 448.0 L475.5 440.5 L469.5 455.5 Z"></path>
+					<g fill="#33322E">
+						<path d="M475.5 333.5 L469.5 344.0 L463.5 333.5 L469.5 323.0 Z"></path>
+					</g>
+					<path d="M303.5 220.9 L-45 345.5 L-45 521 L-45 521 L-45 696.5 L-45 696.5 L465.62240570964957 789.9011648062517 L465.6 789.9 " fill="none"></path>
+					<path d="M457.2 794.5 L465.6 789.9 L459.3 782.6 L473.0 791.3 Z"></path>
+					<path d="M635.5 262.5 L772 345.5 L772 456 L772.0 456.0 " fill="none"></path>
+					<path d="M766.0 448.5 L772.0 456.0 L778.0 448.5 L772.0 463.5 Z"></path>
+					<path d="M1114.0 674.0 L1114 696.5 L603.3775942903504 789.9011648062517 L603.4 789.9 " fill="none"></path>
+					<path d="M609.7 782.6 L603.4 789.9 L611.8 794.5 L596.0 791.3 Z"></path>
+					<g data-name="Quadra">
+						<g fill="#eee8d5" stroke="#33322E" data-name="Quadra">
+							<rect x="897.0" y="374.0" height="294.0" width="434.0" data-name="Quadra"></rect>
+							<path d="M897.0 408.0 L1331.0 408.0" fill="none" data-name="Quadra"></path>
+							<path d="M897.0 494.0 L1331.0 494.0" fill="none" data-name="Quadra"></path>
+						</g>
+						<g transform="translate(897, 374)" font-family="Helvetica" font-size="13pt" font-weight="bold" font-style="normal" data-name="Quadra" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Quadra" data-compartment="0">
+								<text x="209.0" y="15.3" stroke="none" text-anchor="middle" data-name="Quadra" data-compartment="0">Quadra</text>
+								
+							</g>
+						</g>
+						<g transform="translate(897, 408)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="Quadra" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Quadra" data-compartment="1">
+								<text x="0.0" y="15.3" stroke="none" data-name="Quadra" data-compartment="1">-id: String</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="Quadra" data-compartment="1">-nome: String</text>
+								<text x="0.0" y="50.4" stroke="none" data-name="Quadra" data-compartment="1">-modalidadesPermitidas: Set~Modalidade~</text>
+								<text x="0.0" y="67.9" stroke="none" data-name="Quadra" data-compartment="1">-ativa: boolean</text>
+								
+							</g>
+						</g>
+						<g transform="translate(897, 494)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="Quadra" data-compartment="2">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Quadra" data-compartment="2">
+								<text x="0.0" y="15.3" stroke="none" data-name="Quadra" data-compartment="2">+getId(): String</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="Quadra" data-compartment="2">+getNome(): String</text>
+								<text x="0.0" y="50.4" stroke="none" data-name="Quadra" data-compartment="2">+aceitaModalidade(modalidade: Modalidade): boolean</text>
+								<text x="0.0" y="67.9" stroke="none" data-name="Quadra" data-compartment="2">+ativar(): void</text>
+								<text x="0.0" y="85.5" stroke="none" data-name="Quadra" data-compartment="2">+desativar(): void</text>
+								<text x="0.0" y="103.0" stroke="none" data-name="Quadra" data-compartment="2">+isAtiva(): boolean</text>
+								<text x="0.0" y="120.6" stroke="none" data-name="Quadra" data-compartment="2">+getModalidadesPermitidas(): Set~Modalidade~</text>
+								<text x="0.0" y="138.1" stroke="none" data-name="Quadra" data-compartment="2">+equals(o: Object): boolean</text>
+								<text x="0.0" y="155.7" stroke="none" data-name="Quadra" data-compartment="2">+hashCode(): int</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="Participante">
+						<g fill="#eee8d5" stroke="#33322E" data-name="Participante">
+							<rect x="6.0" y="435.5" height="171.0" width="229.0" data-name="Participante"></rect>
+							<path d="M6.0 469.5 L235.0 469.5" fill="none" data-name="Participante"></path>
+							<path d="M6.0 520.5 L235.0 520.5" fill="none" data-name="Participante"></path>
+						</g>
+						<g transform="translate(6, 435.5)" font-family="Helvetica" font-size="13pt" font-weight="bold" font-style="normal" data-name="Participante" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Participante" data-compartment="0">
+								<text x="106.5" y="15.3" stroke="none" text-anchor="middle" data-name="Participante" data-compartment="0">Participante</text>
+								
+							</g>
+						</g>
+						<g transform="translate(6, 469.5)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="Participante" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Participante" data-compartment="1">
+								<text x="0.0" y="15.3" stroke="none" data-name="Participante" data-compartment="1">-idParticipante: String</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="Participante" data-compartment="1">-nome: String</text>
+								
+							</g>
+						</g>
+						<g transform="translate(6, 520.5)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="Participante" data-compartment="2">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Participante" data-compartment="2">
+								<text x="0.0" y="15.3" stroke="none" data-name="Participante" data-compartment="2">+getID(): String</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="Participante" data-compartment="2">+getNome(): String</text>
+								<text x="0.0" y="50.4" stroke="none" data-name="Participante" data-compartment="2">+equals(o: Object): boolean</text>
+								<text x="0.0" y="67.9" stroke="none" data-name="Participante" data-compartment="2">+hashCode(): int</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="PeriodoReserva">
+						<g fill="#eee8d5" stroke="#33322E" data-name="PeriodoReserva">
+							<rect x="292.0" y="461.5" height="119.0" width="355.0" data-name="PeriodoReserva"></rect>
+							<path d="M292.0 495.5 L647.0 495.5" fill="none" data-name="PeriodoReserva"></path>
+							<path d="M292.0 546.5 L647.0 546.5" fill="none" data-name="PeriodoReserva"></path>
+						</g>
+						<g transform="translate(292, 461.5)" font-family="Helvetica" font-size="13pt" font-weight="bold" font-style="normal" data-name="PeriodoReserva" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="PeriodoReserva" data-compartment="0">
+								<text x="169.5" y="15.3" stroke="none" text-anchor="middle" data-name="PeriodoReserva" data-compartment="0">PeriodoReserva</text>
+								
+							</g>
+						</g>
+						<g transform="translate(292, 495.5)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="PeriodoReserva" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="PeriodoReserva" data-compartment="1">
+								<text x="0.0" y="15.3" stroke="none" data-name="PeriodoReserva" data-compartment="1">+inicio: LocalDateTime</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="PeriodoReserva" data-compartment="1">+fim: LocalDateTime</text>
+								
+							</g>
+						</g>
+						<g transform="translate(292, 546.5)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="PeriodoReserva" data-compartment="2">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="PeriodoReserva" data-compartment="2">
+								<text x="0.0" y="15.3" stroke="none" data-name="PeriodoReserva" data-compartment="2">+sobrepoe(outro: PeriodoReserva): boolean</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="Reserva">
+						<g fill="#eee8d5" stroke="#33322E" data-name="Reserva">
+							<rect x="309.5" y="6.0" height="311.0" width="320.0" data-name="Reserva"></rect>
+							<path d="M309.5 40.0 L629.5 40.0" fill="none" data-name="Reserva"></path>
+							<path d="M309.5 161.0 L629.5 161.0" fill="none" data-name="Reserva"></path>
+						</g>
+						<g transform="translate(309.5, 6)" font-family="Helvetica" font-size="13pt" font-weight="bold" font-style="normal" data-name="Reserva" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Reserva" data-compartment="0">
+								<text x="152.0" y="15.3" stroke="none" text-anchor="middle" data-name="Reserva" data-compartment="0">Reserva</text>
+								
+							</g>
+						</g>
+						<g transform="translate(309.5, 40)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="Reserva" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Reserva" data-compartment="1">
+								<text x="0.0" y="15.3" stroke="none" data-name="Reserva" data-compartment="1">-idReserva: String</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="Reserva" data-compartment="1">-participante: Participante</text>
+								<text x="0.0" y="50.4" stroke="none" data-name="Reserva" data-compartment="1">-quadra: Quadra</text>
+								<text x="0.0" y="67.9" stroke="none" data-name="Reserva" data-compartment="1">-periodoReserva: PeriodoReserva</text>
+								<text x="0.0" y="85.5" stroke="none" data-name="Reserva" data-compartment="1">-modalidade: Modalidade</text>
+								<text x="0.0" y="103.0" stroke="none" data-name="Reserva" data-compartment="1">-statusReserva: StatusReserva</text>
+								
+							</g>
+						</g>
+						<g transform="translate(309.5, 161)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="Reserva" data-compartment="2">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Reserva" data-compartment="2">
+								<text x="0.0" y="15.3" stroke="none" data-name="Reserva" data-compartment="2">+getId(): String</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="Reserva" data-compartment="2">+getParticipante(): Participante</text>
+								<text x="0.0" y="50.4" stroke="none" data-name="Reserva" data-compartment="2">+getQuadra(): Quadra</text>
+								<text x="0.0" y="67.9" stroke="none" data-name="Reserva" data-compartment="2">+getPeriodoReserva(): PeriodoReserva</text>
+								<text x="0.0" y="85.5" stroke="none" data-name="Reserva" data-compartment="2">+getModalidade(): Modalidade</text>
+								<text x="0.0" y="103.0" stroke="none" data-name="Reserva" data-compartment="2">+getStatusReserva(): StatusReserva</text>
+								<text x="0.0" y="120.6" stroke="none" data-name="Reserva" data-compartment="2">+equals(o: Object): boolean</text>
+								<text x="0.0" y="138.1" stroke="none" data-name="Reserva" data-compartment="2">+hashCode(): int</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="Modalidade">
+						<g fill="#eee8d5" stroke="#33322E" data-name="Modalidade">
+							<rect x="479.0" y="725.0" height="155.0" width="111.0" data-name="Modalidade"></rect>
+							<path d="M479.0 759.0 L590.0 759.0" fill="none" data-name="Modalidade"></path>
+						</g>
+						<g transform="translate(479, 725)" font-family="Helvetica" font-size="13pt" font-weight="bold" font-style="normal" data-name="Modalidade" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Modalidade" data-compartment="0">
+								<text x="47.5" y="15.3" stroke="none" text-anchor="middle" data-name="Modalidade" data-compartment="0">Modalidade</text>
+								
+							</g>
+						</g>
+						<g transform="translate(479, 759)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="Modalidade" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Modalidade" data-compartment="1">
+								<text x="0.0" y="15.3" stroke="none" data-name="Modalidade" data-compartment="1">FUTSAL</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="Modalidade" data-compartment="1">VOLEIBOL</text>
+								<text x="0.0" y="50.4" stroke="none" data-name="Modalidade" data-compartment="1">BASQUETE</text>
+								<text x="0.0" y="67.9" stroke="none" data-name="Modalidade" data-compartment="1">TENIS</text>
+								<text x="0.0" y="85.5" stroke="none" data-name="Modalidade" data-compartment="1">HANDEBOL</text>
+								<text x="0.0" y="103.0" stroke="none" data-name="Modalidade" data-compartment="1">SOCIETY</text>
+								
+							</g>
+						</g>
+					</g>
+					<g data-name="StatusReserva">
+						<g fill="#eee8d5" stroke="#33322E" data-name="StatusReserva">
+							<rect x="704.0" y="469.5" height="103.0" width="136.0" data-name="StatusReserva"></rect>
+							<path d="M704.0 503.5 L840.0 503.5" fill="none" data-name="StatusReserva"></path>
+						</g>
+						<g transform="translate(704, 469.5)" font-family="Helvetica" font-size="13pt" font-weight="bold" font-style="normal" data-name="StatusReserva" data-compartment="0">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="StatusReserva" data-compartment="0">
+								<text x="60.0" y="15.3" stroke="none" text-anchor="middle" data-name="StatusReserva" data-compartment="0">StatusReserva</text>
+								
+							</g>
+						</g>
+						<g transform="translate(704, 503.5)" font-family="Helvetica" font-size="13pt" font-weight="normal" font-style="normal" data-name="StatusReserva" data-compartment="1">
+							<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="StatusReserva" data-compartment="1">
+								<text x="0.0" y="15.3" stroke="none" data-name="StatusReserva" data-compartment="1">CONFIRMADA</text>
+								<text x="0.0" y="32.8" stroke="none" data-name="StatusReserva" data-compartment="1">CANCELADA</text>
+								<text x="0.0" y="50.4" stroke="none" data-name="StatusReserva" data-compartment="1">CONCLUIDA</text>
+								
+							</g>
+						</g>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>
