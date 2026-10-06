@@ -31,5 +31,4 @@ Registre decisões que afetem o modelo, a API, as dependências ou a evolução.
   a criação de reserva deverá validar essa compatibilidade antes de aceitar o pedido.
 
 - Teste ou evidência que verifica a decisão: teste de aceitação de reserva com modalidade
-  compatível e teste de rejeição de reserva com modalidade incompatível (a implementar
-  no checkpoint 1).
+  compatível e teste de rejeição de reserva com modalidade incompatível.

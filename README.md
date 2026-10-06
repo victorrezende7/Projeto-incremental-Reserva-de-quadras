@@ -37,8 +37,4 @@ No Windows:
 .\mvnw.cmd test
 ```
 
-## Estrutura
 
-As classes de domínio serão criadas pela equipe depois da escolha da variante.
-Não adicione camadas, interfaces ou padrões antes de existir um requisito que
-justifique a decisão.
