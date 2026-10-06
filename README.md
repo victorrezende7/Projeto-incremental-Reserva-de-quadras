@@ -1,10 +1,15 @@
 # Plataforma de Reservas
-
+Aplicação Java para administrar reservas de recursos em um período,
+desenvolvida na disciplina de Programação Orientada a Objetos (Fagammon, 2026/2).
 ## Equipe
 
 - Integrante 1: Victor Henrique Rezende Andrade
-- Integrante 2: 
 
+## Problema
+
+- Quadras esportivas são recursos disputados: duas pessoas não podem usar a mesma
+  quadra no mesmo horário, e nem toda quadra comporta toda modalidade. O sistema
+  cadastra participantes e quadras, e registra reservas respeitando essas regras.
 ## Variante
 
 - Variante: Quadras Esportivas
@@ -38,3 +43,7 @@ No Windows:
 ```
 
 
+## Documentação
+
+- [Decisões do projeto](docs/decisoes.md)
+- [Uso de IA](docs/IA_USAGE.md)

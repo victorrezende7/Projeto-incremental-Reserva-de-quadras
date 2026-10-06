@@ -11,4 +11,12 @@ public record PeriodoReserva(LocalDateTime inicio, LocalDateTime fim) {
             throw new IllegalArgumentException("Início do período deve ser anterior ao fim");
         }
     }
+
+    public boolean sobrepoe(PeriodoReserva outro){
+        if (outro == null) {
+            throw new IllegalArgumentException("Período para comparação não pode ser nulo");
+        }
+        return this.inicio.isBefore(outro.fim) && outro.inicio.isBefore(this.fim);
+    }
+
 }
