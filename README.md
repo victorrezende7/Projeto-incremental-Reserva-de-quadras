@@ -1,9 +1,14 @@
 # Plataforma de Reservas
 Aplicação Java para administrar reservas de recursos em um período,
 desenvolvida na disciplina de Programação Orientada a Objetos (Fagammon, 2026/2).
+
 ## Equipe
 
 - Integrante 1: Victor Henrique Rezende Andrade
+- Integrante 2: Arthur Emanuel de Sales Naves
+
+## Github
+- Link Repositório: https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras
 
 ## Problema
 
@@ -69,7 +74,7 @@ No Windows:
 ## Entregas
 
 ## CheckPoint 1
-- Data: 06/10
-- url commit: https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras/commit/6b916d944c89b71dfedbc627eab6f9b696b48655
+- Data: 16/10
+- url commit: https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras/commit/968b873d5bb9386d69ec47963f888fc4af754479
 - branch: master
-- hash: 6b916d944c89b71dfedbc627eab6f9b696b48655
+- hash: 968b873d5bb9386d69ec47963f888fc4af754479
