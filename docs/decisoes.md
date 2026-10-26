@@ -109,5 +109,16 @@ Registre decisões que afetem o modelo, a API, as dependências ou a evolução.
   (`duasReservasDiferentesNaoDevemSerIguais`).
 
 
+### Gerenciador de Reservas atraves da classe GerenciadorReservas
+
+- Data: 26/10
+- Problema observado: Reservas soltas no codigo
+- Alternativas consideradas: Criar um array para armazenar as reservas ou uma lista
+- Decisão: Utilizar um arraylist para armazenar as reservas
+- Consequências: Mais organização e facilidade para operações envolvendo as reservas.
+- Teste ou evidência que verifica a decisão: `GerenciadorReservasTest`
+
+
+
   
 

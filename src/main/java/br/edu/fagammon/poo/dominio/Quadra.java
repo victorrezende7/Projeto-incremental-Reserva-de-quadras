@@ -28,7 +28,6 @@ public class Quadra {
         this.ativa = true;
     }
 
-
     public String getId(){return id;}
     public String getNome(){return nome;}
 

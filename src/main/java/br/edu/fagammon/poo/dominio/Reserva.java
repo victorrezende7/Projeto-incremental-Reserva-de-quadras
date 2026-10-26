@@ -8,7 +8,7 @@ public class Reserva {
     private final Participante participante;
     private final Quadra quadra;
     private final PeriodoReserva periodoReserva;
-    private final StatusReserva statusReserva;
+    private StatusReserva statusReserva;
     private final Modalidade modalidade;
 
     public Reserva(Participante participante, Quadra quadra, PeriodoReserva periodoReserva, Modalidade modalidade){
@@ -21,6 +21,9 @@ public class Reserva {
         }
         if (periodoReserva == null) {
             throw new IllegalArgumentException("Período da reserva não pode ser nulo");
+        }
+        if (modalidade == null) {
+            throw new IllegalArgumentException("Modalidade não pode ser nula");
         }
         if(!quadra.aceitaModalidade(modalidade)){
             throw new IllegalArgumentException("Modalidade não permitida na quadra reservada");
@@ -52,6 +55,11 @@ public class Reserva {
 
     public StatusReserva getStatusReserva(){return statusReserva;}
 
+    public void cancelar(){statusReserva = StatusReserva.CANCELADA;}
+
+    public void concluir(){statusReserva = StatusReserva.CONCLUIDA;}
+
+
 
     @Override
     public boolean equals(Object o){
@@ -63,5 +71,18 @@ public class Reserva {
     @Override
     public int hashCode(){
         return Objects.hashCode(idReserva);
+    }
+
+    @Override
+    public String toString() {
+        return "Reserva{" +
+                "id='" + idReserva + '\'' +
+                ", participante=" + participante.getNome() +
+                ", quadra=" + quadra.getNome() +
+                ", inicio=" + periodoReserva.inicio() +
+                ", fim=" + periodoReserva.fim() +
+                ", modalidade=" + modalidade +
+                ", status=" + statusReserva +
+                '}';
     }
 }
