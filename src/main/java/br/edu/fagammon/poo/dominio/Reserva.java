@@ -55,9 +55,19 @@ public class Reserva {
 
     public StatusReserva getStatusReserva(){return statusReserva;}
 
-    public void cancelar(){statusReserva = StatusReserva.CANCELADA;}
+    public void cancelar(){
+        if(getStatusReserva() != StatusReserva.CONFIRMADA){
+            throw new IllegalStateException("Não é possivel alterar uma reserva que esta " + getStatusReserva());
+        }
+        statusReserva = StatusReserva.CANCELADA;
+    }
 
-    public void concluir(){statusReserva = StatusReserva.CONCLUIDA;}
+    public void concluir(){
+        if(getStatusReserva() != StatusReserva.CONFIRMADA){
+            throw new IllegalStateException("Não é possivel alterar uma reserva que esta " + getStatusReserva());
+        }
+        statusReserva = StatusReserva.CONCLUIDA;
+    }
 
 
 

@@ -12,21 +12,34 @@ public class Aplicacao {
 
         Participante p1 = new Participante("01", "Victor");
         Participante p2 = new Participante("02", "Marcos");
+        Participante p3 = new Participante("03", "Lucas");
 
         PeriodoReserva pe1 = new PeriodoReserva(LocalDateTime.of(
                 2026,10,26,14,0,0),
                 LocalDateTime.of(2026,10,26,15,0,0));
 
         PeriodoReserva pe2 = new PeriodoReserva(LocalDateTime.of(
-                2026,10,26,14,30,0),
-                LocalDateTime.of(2026,10,26,15,30,0));
+                2026,10,26,16,30,0),
+                LocalDateTime.of(2026,10,26,17,30,0));
+
+        PeriodoReserva pe3 = new PeriodoReserva(LocalDateTime.of(2026,10,26,10,0,0),
+                LocalDateTime.of(2026,10,26,11,0,0));
 
         GerenciadorReservas gerenciador = new GerenciadorReservas();
-        gerenciador.criarReserva(p1, quadra01,pe1,Modalidade.FUTSAL);
-        gerenciador.criarReserva(p2, quadra02, pe1, Modalidade.TENIS);
+        Reserva r1 = gerenciador.criarReserva(p1, quadra01,pe1,Modalidade.FUTSAL);
+        Reserva r2 = gerenciador.criarReserva(p2, quadra01, pe2, Modalidade.FUTSAL);
+        Reserva r3 = gerenciador.criarReserva(p3, quadra01, pe3, Modalidade.FUTSAL);
 
-        for (Reserva reserva : gerenciador.getReservas()) {
-            System.out.println(reserva);
-        }
+
+//        for (Reserva reserva : gerenciador.getReservas()) {
+//            System.out.println(reserva);
+//        }
+//        System.out.println(gerenciador.buscaPorQuadra(quadra01));
+
+
+//        System.out.println(gerenciador.buscaPorParticipante(p1));
+//        r1.cancelar();
+//        System.out.println(gerenciador.buscaPorStatus(StatusReserva.CANCELADA));
+        gerenciador.reservasOrdenadasPorData().forEach(System.out::println);
     }
 }

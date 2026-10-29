@@ -3,6 +3,7 @@ package br.edu.fagammon.poo.servico;
 import br.edu.fagammon.poo.dominio.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class GerenciadorReservas {
@@ -12,7 +13,7 @@ public class GerenciadorReservas {
         this.reservas = new ArrayList<>();
     }
 
-    public void criarReserva(Participante participante, Quadra quadra, PeriodoReserva periodo, Modalidade modalidade) {
+    public Reserva criarReserva(Participante participante, Quadra quadra, PeriodoReserva periodo, Modalidade modalidade) {
         Reserva novaReserva  = new Reserva(participante,quadra,periodo,modalidade);
         for (Reserva existente : reservas) {
             if(existente.getQuadra().equals(quadra) && existente.getPeriodoReserva().sobrepoe(periodo) && existente.getStatusReserva() == StatusReserva.CONFIRMADA){
@@ -20,9 +21,35 @@ public class GerenciadorReservas {
             }
         }
         reservas.add(novaReserva);
+        return novaReserva;
     }
 
     public List<Reserva> getReservas(){
         return List.copyOf(reservas);
+    }
+
+    public List<Reserva> buscaPorQuadra(Quadra quadra){
+        return reservas.stream()
+                .filter(reserva -> reserva.getQuadra().equals(quadra))
+                .toList();
+    }
+
+    public List<Reserva> buscaPorParticipante(Participante participante){
+        return reservas.stream()
+                .filter(reserva -> reserva.getParticipante().equals(participante))
+                .toList();
+
+    }
+
+    public List<Reserva> buscaPorStatus(StatusReserva status){
+        return reservas.stream()
+                .filter(reserva -> reserva.getStatusReserva() == status)
+                .toList();
+    }
+
+    public List<Reserva> reservasOrdenadasPorData(){
+        return reservas.stream()
+                .sorted(Comparator.comparing(reserva -> reserva.getPeriodoReserva().inicio()))
+                .toList();
     }
 }

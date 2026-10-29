@@ -119,6 +119,13 @@ Registre decisões que afetem o modelo, a API, as dependências ou a evolução.
 - Teste ou evidência que verifica a decisão: `GerenciadorReservasTest`
 
 
+### Consultas e ordenação
 
+- Data: 28/10/2026
+- Problema observado: Ausência de mecanismos para consultar reservas por critérios específicos e ordená-las cronologicamente.
+- Alternativas consideradas: Utilizar laços tradicionais, como for, ou a API Stream do Java.
+- Decisão: Utilizar Streams e expressões lambda para filtrar reservas por quadra, participante e status, além de Comparator.comparing() para ordenar pelo início do período.
+- Consequências: Código mais conciso, legível e facilidade para adicionar novas consultas.
+- Teste ou evidência que verifica a decisão: Consultas verificadas manualmente na classe Aplicacao. Testes automatizados serão implementados posteriormente.
   
 

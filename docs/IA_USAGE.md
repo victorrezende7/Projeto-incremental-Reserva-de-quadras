@@ -51,3 +51,17 @@ documentação ou decisões.
 - Parte do projeto afetada: Os testes de Participante, PeriodoReserva, Quadra, Reserva.
 - Resultado aproveitado: Ideias de testes válidos e coeerentes com as validções das classes.
 
+## Uso
+- Data: 28/10/2026
+- Ferramenta: ChatGPT (OpenAI).
+- Objetivo: A
+  - uxiliar na compreensão dos requisitos do Checkpoint 2.
+  - Esclarecer conceitos de Streams, lambdas, Comparator e exceções.
+  - Orientar a implementação das consultas
+- Parte do projeto afetada:
+  - Classe Reserva: validação das transições de status.
+  - Classe GerenciadorReservas: consultas, ordenação e retorno da criação de reservas.
+- Resultado aproveitado: Organização e possibilidade de realizar consultas com listas atraves da classe GerenciadorReservas
+- Verificações executadas:As implementações foram analisadas e testadas manualmente na classe de aplicacao, utilizando diferentes reservas, participantes e quadras.
+- Correções ou decisões da equipe: As sugestões foram avaliadas e adaptadas à estrutura existente. A equipe optou por utilizar Streams e lambdas nas consultas
+
