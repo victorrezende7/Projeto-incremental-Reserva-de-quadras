@@ -1,5 +1,7 @@
 package br.edu.fagammon.poo.dominio;
 
+import br.edu.fagammon.poo.servico.GerenciadorReservas;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -8,6 +10,34 @@ import java.util.EnumSet;
 
 
 public class ReservaTest {
+    private GerenciadorReservas gerenciadorReservas;
+    private Participante p1;
+    private Quadra q1;
+    private PeriodoReserva periodo;
+    private Reserva re1;
+
+    @BeforeEach
+    void prepararTeste() {
+        gerenciadorReservas = new GerenciadorReservas();
+
+        p1 = new Participante("01", "Victor");
+
+        q1 = new Quadra(
+                "01",
+                "Quadra de Basquete",
+                EnumSet.of(Modalidade.BASQUETE)
+        );
+
+        periodo = new PeriodoReserva(
+                LocalDateTime.of(2026, 10, 4, 16, 0),
+                LocalDateTime.of(2026, 10, 4, 17, 0)
+        );
+
+        re1 = gerenciadorReservas.criarReserva(
+                p1, q1, periodo, Modalidade.BASQUETE
+        );
+    }
+
 
     @Test
     void deveCriarReservaValida(){
@@ -114,6 +144,55 @@ public class ReservaTest {
     }
 
 
+    @Test
+    void deveCancelarReservaConfirmada(){
+        GerenciadorReservas gerenciadorReservas = new GerenciadorReservas();
+        Participante p1 = new Participante("01", "Victor");
+        Quadra q1 = new Quadra("01","Quadra de volei", EnumSet.of(Modalidade.BASQUETE));
+        PeriodoReserva periodo = new PeriodoReserva(
+                LocalDateTime.of(2026, 10, 4, 16, 0),
+                LocalDateTime.of(2026, 10, 4, 17, 0));
+        Reserva re1 = gerenciadorReservas.criarReserva(p1,q1,periodo,Modalidade.BASQUETE);
+        re1.cancelar();
+        assertEquals(StatusReserva.CANCELADA, re1.getStatusReserva());
+    }
+
+    @Test
+    void deveConcluirReservaConfirmada(){
+        re1.concluir();
+        assertEquals(StatusReserva.CONCLUIDA, re1.getStatusReserva());
+    }
+
+    @Test
+    void naoDeveCancelarReservaCancelada(){
+        re1.cancelar();
+        assertThrows(IllegalStateException.class, ()-> re1.cancelar());
+    }
+
+    @Test
+    void naoDeveCancelarReservaConcluida(){
+        re1.concluir();
+        assertThrows(IllegalStateException.class,()-> re1.cancelar());
+    }
+
+    @Test
+    void naoDeveConcluirReservaCancelada(){
+        re1.cancelar();
+        assertThrows(IllegalStateException.class,()-> re1.concluir());
+    }
+
+    @Test
+    void naoDeveConcluirReservaConcluida(){
+        re1.concluir();
+        assertThrows(IllegalStateException.class,()->re1.concluir());
+    }
+
+    @Test
+    void deveManterStatusAposTransicaoInvalida(){
+            re1.concluir();
+            assertThrows(IllegalStateException.class, () -> re1.cancelar());
+            assertEquals(StatusReserva.CONCLUIDA, re1.getStatusReserva());
+    }
 }
 
 

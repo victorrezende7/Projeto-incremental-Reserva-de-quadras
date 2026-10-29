@@ -15,8 +15,13 @@ class GerenciadorReservasTest {
     private GerenciadorReservas gerenciador;
     private Participante p1;
     private Participante p2;
+    private Participante p3;
+    private PeriodoReserva pe1;
+    private PeriodoReserva pe2;
+    private PeriodoReserva pe3;
     private Quadra quadra1;
     private Quadra quadra2;
+    private Quadra quadra3;
 
     @BeforeEach
     void configurar() {
@@ -24,7 +29,15 @@ class GerenciadorReservasTest {
 
         p1 = new Participante("01", "Joao");
         p2 = new Participante("02", "Maria");
+        p3 = new Participante("03", "Vinicius");
 
+        pe1 = new PeriodoReserva(LocalDateTime.of(2026, 10, 26, 14, 0, 0),
+                LocalDateTime.of(2026, 10, 26, 15, 0, 0));
+        pe2 = new PeriodoReserva(LocalDateTime.of(
+                2026, 10, 26, 16, 30, 0),
+                LocalDateTime.of(2026, 10, 26, 17, 30, 0));
+        pe3 = new PeriodoReserva(LocalDateTime.of(2026,10,26,18,0,0),
+                LocalDateTime.of(2026,10,26,19,0,0));
         quadra1 = new Quadra(
                 "01",
                 "Quadra A",
@@ -34,28 +47,19 @@ class GerenciadorReservasTest {
         quadra2 = new Quadra(
                 "02",
                 "Quadra B",
-                EnumSet.of(Modalidade.FUTSAL)
+                EnumSet.of(Modalidade.TENIS)
         );
-    }
 
-    // Auxiliar para criar periodos sem repetir codigo
-    private PeriodoReserva periodo(
-            int horaInicio, int minutoInicio,
-            int horaFim, int minutoFim) {
-
-        return new PeriodoReserva(
-                LocalDateTime.of(
-                        2026, 10, 27, horaInicio, minutoInicio),
-                LocalDateTime.of(
-                        2026, 10, 27, horaFim, minutoFim)
+        quadra3 = new Quadra(
+                "03",
+                "Quadra C",
+                EnumSet.of(Modalidade.VOLEIBOL)
         );
     }
 
 
     @Test
     void deveCriarReservaValida() {
-        PeriodoReserva pe1 = periodo(14, 0, 15, 0);
-
         gerenciador.criarReserva(
                 p1, quadra1, pe1, Modalidade.FUTSAL
         );
@@ -70,16 +74,13 @@ class GerenciadorReservasTest {
 
     @Test
     void deveImpedirReservasConflitantes() {
-        PeriodoReserva pe1 = periodo(14, 0, 15, 0);
-        PeriodoReserva pe2 = periodo(14, 30, 15, 30);
-
         gerenciador.criarReserva(
                 p1, quadra1, pe1, Modalidade.FUTSAL
         );
 
         assertThrows(IllegalArgumentException.class, () -> {
             gerenciador.criarReserva(
-                    p2, quadra1, pe2, Modalidade.FUTSAL
+                    p2, quadra1, pe1, Modalidade.FUTSAL
             );
         });
 
@@ -89,9 +90,6 @@ class GerenciadorReservasTest {
 
     @Test
     void devePermitirHorariosConsecutivos() {
-        PeriodoReserva pe1 = periodo(14, 0, 15, 0);
-        PeriodoReserva pe2 = periodo(15, 0, 16, 0);
-
         gerenciador.criarReserva(
                 p1, quadra1, pe1, Modalidade.FUTSAL
         );
@@ -106,14 +104,12 @@ class GerenciadorReservasTest {
 
     @Test
     void devePermitirMesmoHorarioEmQuadrasDiferentes() {
-        PeriodoReserva pe1 = periodo(14, 0, 15, 0);
-
         gerenciador.criarReserva(
                 p1, quadra1, pe1, Modalidade.FUTSAL
         );
 
         gerenciador.criarReserva(
-                p2, quadra2, pe1, Modalidade.FUTSAL
+                p2, quadra2, pe1, Modalidade.TENIS
         );
 
         assertEquals(2, gerenciador.getReservas().size());
@@ -122,8 +118,6 @@ class GerenciadorReservasTest {
 
     @Test
     void devePermitirReservaAposCancelamento() {
-        PeriodoReserva pe1 = periodo(14, 0, 15, 0);
-
         gerenciador.criarReserva(
                 p1, quadra1, pe1, Modalidade.FUTSAL
         );
@@ -151,9 +145,6 @@ class GerenciadorReservasTest {
 
     @Test
     void deveRetornarReservasCadastradas() {
-        PeriodoReserva pe1 = periodo(14, 0, 15, 0);
-        PeriodoReserva pe2 = periodo(16, 0, 17, 0);
-
         gerenciador.criarReserva(
                 p1, quadra1, pe1, Modalidade.FUTSAL
         );
@@ -172,8 +163,6 @@ class GerenciadorReservasTest {
 
     @Test
     void naoDevePermitirModificarListaExternamente() {
-        PeriodoReserva pe1 = periodo(14, 0, 15, 0);
-
         gerenciador.criarReserva(
                 p1, quadra1, pe1, Modalidade.FUTSAL
         );
@@ -185,6 +174,63 @@ class GerenciadorReservasTest {
         });
 
         assertEquals(1, gerenciador.getReservas().size());
+    }
+
+    @Test
+    void deveBuscarReservasPorQuadra() {
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL);
+        Reserva re2 = gerenciador.criarReserva(p2, quadra1, pe2, Modalidade.FUTSAL);
+        Reserva re3 = gerenciador.criarReserva(p3, quadra2, pe2, Modalidade.TENIS);
+
+        List<Reserva> resultado = gerenciador.buscaPorQuadra(quadra1);
+        assertEquals(2, resultado.size());
+        assertTrue(resultado.contains(re1));
+        assertTrue(resultado.contains(re2));
+        assertFalse(resultado.contains(re3));
+    }
+
+    @Test
+    void deveBuscarReservasPorParticipante() {
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL);
+        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL);
+        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe2, Modalidade.TENIS);
+        List<Reserva> resultado = gerenciador.buscaPorParticipante(p1);
+        assertEquals(2, resultado.size());
+        assertTrue(resultado.contains(re1));
+        assertTrue(resultado.contains(re2));
+        assertFalse(resultado.contains(re3));
+    }
+
+    @Test
+    void deveBuscarReservaPoRStatus() {
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL);
+        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL);
+        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe2, Modalidade.TENIS);
+        re1.cancelar();
+        re3.cancelar();
+        List<Reserva> resultado = gerenciador.buscaPorStatus(StatusReserva.CANCELADA);
+        assertEquals(2, resultado.size());
+        assertTrue(resultado.contains(re1));
+        assertTrue(resultado.contains(re3));
+        assertFalse(resultado.contains(re2));
+    }
+
+    @Test
+    void retornarListaVazia() {
+        List<Reserva> resultado = gerenciador.getReservas();
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
+    void deveOrdernarPorData(){
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe3, Modalidade.FUTSAL);
+        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL);
+        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe1, Modalidade.TENIS);
+        List<Reserva> resultado = gerenciador.reservasOrdenadasPorData();
+        assertEquals(3, resultado.size());
+        assertEquals(re2, resultado.get(1));
+        assertEquals(re3, resultado.get(0));
+        assertEquals(re1, resultado.get(2));
     }
 }
 
