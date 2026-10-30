@@ -1,5 +1,7 @@
 package br.edu.fagammon.poo.dominio;
 
+import br.edu.fagammon.poo.politica.CancelamentoLivre;
+import br.edu.fagammon.poo.politica.PoliticaCancelamento;
 import br.edu.fagammon.poo.servico.GerenciadorReservas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ public class ReservaTest {
     private Quadra q1;
     private PeriodoReserva periodo;
     private Reserva re1;
+    private PoliticaCancelamento politicaCancelamento;
 
     @BeforeEach
     void prepararTeste() {
@@ -33,9 +36,13 @@ public class ReservaTest {
                 LocalDateTime.of(2026, 10, 4, 17, 0)
         );
 
+        politicaCancelamento = new CancelamentoLivre();
+
         re1 = gerenciadorReservas.criarReserva(
-                p1, q1, periodo, Modalidade.BASQUETE
+                p1, q1, periodo, Modalidade.BASQUETE,politicaCancelamento
         );
+
+
     }
 
 
@@ -46,7 +53,7 @@ public class ReservaTest {
         PeriodoReserva periodo = new PeriodoReserva(
                 LocalDateTime.of(2026, 10, 4, 16, 0),
                 LocalDateTime.of(2026, 10, 4, 17, 0));
-        Reserva reserva1 = new Reserva(p1,q1,periodo,Modalidade.FUTSAL);
+        Reserva reserva1 = new Reserva(p1,q1,periodo,Modalidade.FUTSAL, politicaCancelamento);
         assertEquals(StatusReserva.CONFIRMADA, reserva1.getStatusReserva() );
     }
 
@@ -59,7 +66,7 @@ public class ReservaTest {
                 LocalDateTime.of(2026, 10, 4, 17, 0));
 
         assertThrows(IllegalArgumentException.class,()->{
-            new Reserva(p1,q1,periodo,Modalidade.FUTSAL);
+            new Reserva(p1,q1,periodo,Modalidade.FUTSAL,politicaCancelamento);
         });
     }
 
@@ -70,7 +77,7 @@ public class ReservaTest {
                 LocalDateTime.of(2026, 10, 4, 16, 0),
                 LocalDateTime.of(2026, 10, 4, 17, 0));
         assertThrows(IllegalArgumentException.class, ()->{
-            new Reserva(null,q1,periodo,Modalidade.HANDEBOL);
+            new Reserva(null,q1,periodo,Modalidade.HANDEBOL, politicaCancelamento);
         });
     }
 
@@ -81,7 +88,7 @@ public class ReservaTest {
                 LocalDateTime.of(2026, 10, 4, 16, 0),
                 LocalDateTime.of(2026, 10, 4, 17, 0));
         assertThrows(IllegalArgumentException.class, ()->{
-            new Reserva(participante,null,periodo,Modalidade.HANDEBOL);
+            new Reserva(participante,null,periodo,Modalidade.HANDEBOL,politicaCancelamento);
         });
     }
     @Test
@@ -89,7 +96,7 @@ public class ReservaTest {
         Participante participante = new Participante("01", "Victor");
         Quadra quadra = new Quadra("01","Quadra grama sintetica",EnumSet.of(Modalidade.SOCIETY));
         assertThrows(IllegalArgumentException.class, ()->{
-            new Reserva(participante,quadra,null,Modalidade.HANDEBOL);
+            new Reserva(participante,quadra,null,Modalidade.HANDEBOL,politicaCancelamento);
         });
     }
 
@@ -102,7 +109,7 @@ public class ReservaTest {
                 LocalDateTime.of(2026, 10, 4, 17, 0));
         q1.desativar();
         assertThrows(IllegalArgumentException.class,()->{
-           new Reserva(p1,q1,periodo,Modalidade.VOLEIBOL);
+           new Reserva(p1,q1,periodo,Modalidade.VOLEIBOL,politicaCancelamento);
         });
     }
 
@@ -113,8 +120,8 @@ public class ReservaTest {
         PeriodoReserva periodo = new PeriodoReserva(
                 LocalDateTime.of(2026, 10, 4, 16, 0),
                 LocalDateTime.of(2026, 10, 4, 17, 0));
-        Reserva re1 = new Reserva(p1,q1,periodo,Modalidade.TENIS);
-        Reserva re2 = new Reserva(p1,q1,periodo,Modalidade.TENIS);
+        Reserva re1 = new Reserva(p1,q1,periodo,Modalidade.TENIS,politicaCancelamento);
+        Reserva re2 = new Reserva(p1,q1,periodo,Modalidade.TENIS,politicaCancelamento);
         assertNotEquals(re1,re2);
     }
 
@@ -125,7 +132,7 @@ public class ReservaTest {
         PeriodoReserva periodo = new PeriodoReserva(
                 LocalDateTime.of(2026, 10, 4, 16, 0),
                 LocalDateTime.of(2026, 10, 4, 17, 0));
-        Reserva re1 = new Reserva(p1,q1,periodo,Modalidade.BASQUETE);
+        Reserva re1 = new Reserva(p1,q1,periodo,Modalidade.BASQUETE,politicaCancelamento);
         assertEquals(re1,re1);
     }
 
@@ -136,7 +143,7 @@ public class ReservaTest {
         PeriodoReserva periodo = new PeriodoReserva(
                 LocalDateTime.of(2026, 10, 4, 16, 0),
                 LocalDateTime.of(2026, 10, 4, 17, 0));
-        Reserva re1 = new Reserva(p1,q1,periodo,Modalidade.BASQUETE);
+        Reserva re1 = new Reserva(p1,q1,periodo,Modalidade.BASQUETE,politicaCancelamento);
         assertEquals(p1,re1.getParticipante());
         assertEquals(q1,re1.getQuadra());
         assertEquals(periodo,re1.getPeriodoReserva());
@@ -152,7 +159,7 @@ public class ReservaTest {
         PeriodoReserva periodo = new PeriodoReserva(
                 LocalDateTime.of(2026, 10, 4, 16, 0),
                 LocalDateTime.of(2026, 10, 4, 17, 0));
-        Reserva re1 = gerenciadorReservas.criarReserva(p1,q1,periodo,Modalidade.BASQUETE);
+        Reserva re1 = gerenciadorReservas.criarReserva(p1,q1,periodo,Modalidade.BASQUETE,politicaCancelamento);
         re1.cancelar();
         assertEquals(StatusReserva.CANCELADA, re1.getStatusReserva());
     }

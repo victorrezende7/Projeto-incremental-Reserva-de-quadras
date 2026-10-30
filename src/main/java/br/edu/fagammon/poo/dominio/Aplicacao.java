@@ -1,5 +1,8 @@
 package br.edu.fagammon.poo.dominio;
 
+import br.edu.fagammon.poo.politica.CancelamentoComAntecedencia;
+import br.edu.fagammon.poo.politica.CancelamentoLivre;
+import br.edu.fagammon.poo.politica.PoliticaCancelamento;
 import br.edu.fagammon.poo.servico.GerenciadorReservas;
 
 import java.time.LocalDateTime;
@@ -22,13 +25,16 @@ public class Aplicacao {
                 2026,10,26,16,30,0),
                 LocalDateTime.of(2026,10,26,17,30,0));
 
-        PeriodoReserva pe3 = new PeriodoReserva(LocalDateTime.of(2026,10,26,10,0,0),
-                LocalDateTime.of(2026,10,26,11,0,0));
+        PeriodoReserva pe3 = new PeriodoReserva(LocalDateTime.of(2026,10,30,18,0,0),
+                LocalDateTime.of(2026,10,30,20,0,0));
+
+        PoliticaCancelamento cancelamentoLivre = new CancelamentoLivre();
+        PoliticaCancelamento cancelamentoAntecedencia = new CancelamentoComAntecedencia();
 
         GerenciadorReservas gerenciador = new GerenciadorReservas();
-        Reserva r1 = gerenciador.criarReserva(p1, quadra01,pe1,Modalidade.FUTSAL);
-        Reserva r2 = gerenciador.criarReserva(p2, quadra01, pe2, Modalidade.FUTSAL);
-        Reserva r3 = gerenciador.criarReserva(p3, quadra01, pe3, Modalidade.FUTSAL);
+        Reserva r1 = gerenciador.criarReserva(p1, quadra01,pe1,Modalidade.FUTSAL,cancelamentoLivre);
+        Reserva r2 = gerenciador.criarReserva(p2, quadra01, pe2, Modalidade.FUTSAL,cancelamentoLivre);
+        Reserva r3 = gerenciador.criarReserva(p3, quadra01, pe3, Modalidade.FUTSAL,cancelamentoAntecedencia);
 
 
 //        for (Reserva reserva : gerenciador.getReservas()) {
@@ -40,6 +46,7 @@ public class Aplicacao {
 //        System.out.println(gerenciador.buscaPorParticipante(p1));
 //        r1.cancelar();
 //        System.out.println(gerenciador.buscaPorStatus(StatusReserva.CANCELADA));
+//        r3.cancelar();
         gerenciador.reservasOrdenadasPorData().forEach(System.out::println);
     }
 }

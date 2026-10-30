@@ -1,5 +1,7 @@
 package br.edu.fagammon.poo.dominio;
 
+import br.edu.fagammon.poo.politica.PoliticaCancelamento;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,8 +12,9 @@ public class Reserva {
     private final PeriodoReserva periodoReserva;
     private StatusReserva statusReserva;
     private final Modalidade modalidade;
+    private final PoliticaCancelamento politicaCancelamento;
 
-    public Reserva(Participante participante, Quadra quadra, PeriodoReserva periodoReserva, Modalidade modalidade){
+    public Reserva(Participante participante, Quadra quadra, PeriodoReserva periodoReserva, Modalidade modalidade, PoliticaCancelamento politicaCancelamento){
 
         if (participante == null) {
             throw new IllegalArgumentException("Participante não pode ser nulo");
@@ -37,6 +40,7 @@ public class Reserva {
         this.periodoReserva = periodoReserva;
         this.modalidade = modalidade;
         this.statusReserva = StatusReserva.CONFIRMADA;
+        this.politicaCancelamento = Objects.requireNonNull(politicaCancelamento);
     }
 
     public String getId(){
@@ -59,6 +63,7 @@ public class Reserva {
         if(getStatusReserva() != StatusReserva.CONFIRMADA){
             throw new IllegalStateException("Não é possivel alterar uma reserva que esta " + getStatusReserva());
         }
+        politicaCancelamento.validarCancelamento(this);
         statusReserva = StatusReserva.CANCELADA;
     }
 

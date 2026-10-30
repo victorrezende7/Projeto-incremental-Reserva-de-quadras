@@ -1,20 +1,21 @@
 package br.edu.fagammon.poo.servico;
 
 import br.edu.fagammon.poo.dominio.*;
+import br.edu.fagammon.poo.politica.PoliticaCancelamento;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class GerenciadorReservas {
     private final List<Reserva> reservas;
-
     public GerenciadorReservas() {
         this.reservas = new ArrayList<>();
     }
 
-    public Reserva criarReserva(Participante participante, Quadra quadra, PeriodoReserva periodo, Modalidade modalidade) {
-        Reserva novaReserva  = new Reserva(participante,quadra,periodo,modalidade);
+    public Reserva criarReserva(Participante participante, Quadra quadra, PeriodoReserva periodo, Modalidade modalidade, PoliticaCancelamento politicaCancelamento) {
+        Reserva novaReserva  = new Reserva(participante,quadra,periodo,modalidade, politicaCancelamento);
         for (Reserva existente : reservas) {
             if(existente.getQuadra().equals(quadra) && existente.getPeriodoReserva().sobrepoe(periodo) && existente.getStatusReserva() == StatusReserva.CONFIRMADA){
                 throw new IllegalArgumentException("Já existe uma reserva feita para essa quadra nesse horario");
@@ -52,4 +53,6 @@ public class GerenciadorReservas {
                 .sorted(Comparator.comparing(reserva -> reserva.getPeriodoReserva().inicio()))
                 .toList();
     }
+
+
 }

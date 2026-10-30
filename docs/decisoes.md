@@ -127,5 +127,13 @@ Registre decisões que afetem o modelo, a API, as dependências ou a evolução.
 - Decisão: Utilizar Streams e expressões lambda para filtrar reservas por quadra, participante e status, além de Comparator.comparing() para ordenar pelo início do período.
 - Consequências: Código mais conciso, legível e facilidade para adicionar novas consultas.
 - Teste ou evidência que verifica a decisão: Consultas verificadas manualmente na classe Aplicacao. Testes automatizados serão implementados posteriormente.
-  
 
+
+### Políticas de preço
+
+- Data: 30/10/2026
+- Problema observado: Reservas podem ser canceladas sem ter nenhuma política de cancelamento.
+- Alternativas consideradas: Criar uma interface para implementar 2 políticas.
+- Decisão: Criamos uma interface onde implementamos uma poilítica de cancelamento livre e uma com antecedência de 24 horas para reservas especificas.
+- Consequências: Facilidade para implementar 2 tipos de cancelamento diferentes usando uma classe de interface como base;
+- Teste ou evidência que verifica a decisão: Testes realizados nas classes GerenciadorReservasTest,CancelelamentoComAntecedenciaTest, e testes manuais na classe de aplicação.

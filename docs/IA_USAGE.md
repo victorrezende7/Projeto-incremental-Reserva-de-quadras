@@ -54,8 +54,8 @@ documentação ou decisões.
 ## Uso
 - Data: 28/10/2026
 - Ferramenta: ChatGPT (OpenAI).
-- Objetivo: A
-  - uxiliar na compreensão dos requisitos do Checkpoint 2.
+- Objetivo:
+  - Auxiliar na compreensão dos requisitos do Checkpoint 2.
   - Esclarecer conceitos de Streams, lambdas, Comparator e exceções.
   - Orientar a implementação das consultas
 - Parte do projeto afetada:
@@ -65,3 +65,13 @@ documentação ou decisões.
 - Verificações executadas:As implementações foram analisadas e testadas manualmente na classe de aplicacao, utilizando diferentes reservas, participantes e quadras.
 - Correções ou decisões da equipe: As sugestões foram avaliadas e adaptadas à estrutura existente. A equipe optou por utilizar Streams e lambdas nas consultas
 
+
+### Uso
+
+- Data: 30/10/2026
+- Ferramenta: ChatGPT (OpenAI)
+- Objetivo: Auxiliar na compreensão sobre interfaces e nas políticas de cancelamento
+- Parte do projeto afetada: Interface PoliticaDeCancelamento, CancelamentoComAntecedencia, CancelamentoLivre
+- Resultado aproveitado: Possibilidade de adicionar políticas de cancelamentos para determinada reserva, podendo ser livre ou com antecedência
+- Verificações executadas: As implementações foram analisadas e testadas manualmente na classe de aplicacao e nos testes Junit
+- Correções ou decisões da equipe: As sugestões foram avaliadas e decidimos adaptar para a estrutura do nosso projeto.  
