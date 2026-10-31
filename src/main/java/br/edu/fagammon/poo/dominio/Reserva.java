@@ -1,11 +1,12 @@
 package br.edu.fagammon.poo.dominio;
 
 import br.edu.fagammon.poo.politica.PoliticaCancelamento;
+import br.edu.fagammon.poo.excecao.TransicaoReservaInvalidaException;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class Reserva {
+public class Reserva implements Identificavel {
     private final String idReserva;
     private final Participante participante;
     private final Quadra quadra;
@@ -28,6 +29,9 @@ public class Reserva {
         if (modalidade == null) {
             throw new IllegalArgumentException("Modalidade não pode ser nula");
         }
+        if (politicaCancelamento == null) {
+            throw new IllegalArgumentException("Política de cancelamento não pode ser nula");
+        }
         if(!quadra.aceitaModalidade(modalidade)){
             throw new IllegalArgumentException("Modalidade não permitida na quadra reservada");
         }
@@ -40,9 +44,10 @@ public class Reserva {
         this.periodoReserva = periodoReserva;
         this.modalidade = modalidade;
         this.statusReserva = StatusReserva.CONFIRMADA;
-        this.politicaCancelamento = Objects.requireNonNull(politicaCancelamento);
+        this.politicaCancelamento = politicaCancelamento;
     }
 
+    @Override
     public String getId(){
         return idReserva;
     }
@@ -61,7 +66,7 @@ public class Reserva {
 
     public void cancelar(){
         if(getStatusReserva() != StatusReserva.CONFIRMADA){
-            throw new IllegalStateException("Não é possivel alterar uma reserva que esta " + getStatusReserva());
+            throw new TransicaoReservaInvalidaException(statusReserva, StatusReserva.CANCELADA);
         }
         politicaCancelamento.validarCancelamento(this);
         statusReserva = StatusReserva.CANCELADA;
@@ -69,7 +74,7 @@ public class Reserva {
 
     public void concluir(){
         if(getStatusReserva() != StatusReserva.CONFIRMADA){
-            throw new IllegalStateException("Não é possivel alterar uma reserva que esta " + getStatusReserva());
+            throw new TransicaoReservaInvalidaException(statusReserva, StatusReserva.CONCLUIDA);
         }
         statusReserva = StatusReserva.CONCLUIDA;
     }

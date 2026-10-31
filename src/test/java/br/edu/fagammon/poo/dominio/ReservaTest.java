@@ -3,6 +3,8 @@ package br.edu.fagammon.poo.dominio;
 import br.edu.fagammon.poo.politica.CancelamentoLivre;
 import br.edu.fagammon.poo.politica.PoliticaCancelamento;
 import br.edu.fagammon.poo.servico.GerenciadorReservas;
+import br.edu.fagammon.poo.excecao.CancelamentoNaoPermitidoException;
+import br.edu.fagammon.poo.excecao.TransicaoReservaInvalidaException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,7 +60,7 @@ public class ReservaTest {
     }
 
     @Test
-    void reservaAceitaModalidadeInvalida(){
+    void deveRecusarModalidadeIncompativel(){
         Participante p1 = new Participante("01", "Victor");
         Quadra q1 = new Quadra("01","Quadra de volei", EnumSet.of(Modalidade.VOLEIBOL));
         PeriodoReserva periodo = new PeriodoReserva(
@@ -199,6 +201,39 @@ public class ReservaTest {
             re1.concluir();
             assertThrows(IllegalStateException.class, () -> re1.cancelar());
             assertEquals(StatusReserva.CONCLUIDA, re1.getStatusReserva());
+    }
+
+    @Test
+    void deveRecusarModalidadeNula() {
+        assertThrows(IllegalArgumentException.class, () -> new Reserva(p1, q1, periodo, null, politicaCancelamento));
+    }
+
+    @Test
+    void deveRecusarPoliticaNulaComMensagemClara() {
+        IllegalArgumentException erro = assertThrows(IllegalArgumentException.class,
+                () -> new Reserva(p1, q1, periodo, Modalidade.BASQUETE, null));
+        assertTrue(erro.getMessage().contains("Política"));
+    }
+
+    @Test
+    void politicaCompostaDeveSerExecutadaAntesDaTransicao() {
+        PoliticaCancelamento restritiva = reserva -> {
+            assertEquals(StatusReserva.CONFIRMADA, reserva.getStatusReserva());
+            throw new CancelamentoNaoPermitidoException("Cancelamento recusado pela política");
+        };
+        Reserva reserva = new Reserva(p1, q1, periodo, Modalidade.BASQUETE, restritiva);
+        assertThrows(CancelamentoNaoPermitidoException.class, reserva::cancelar);
+        assertEquals(StatusReserva.CONFIRMADA, reserva.getStatusReserva());
+    }
+
+    @Test
+    void deveSinalizarTransicaoInvalidaComExcecaoEspecificaSemConsultarPolitica() {
+        PoliticaCancelamento politica = reserva -> fail("Não deveria consultar política de uma reserva concluída");
+        Reserva reserva = new Reserva(p1, q1, periodo, Modalidade.BASQUETE, politica);
+        reserva.concluir();
+        assertThrows(TransicaoReservaInvalidaException.class, reserva::cancelar);
+        assertThrows(TransicaoReservaInvalidaException.class, reserva::concluir);
+        assertEquals(StatusReserva.CONCLUIDA, reserva.getStatusReserva());
     }
 }
 

@@ -71,7 +71,45 @@ documentação ou decisões.
 - Data: 30/10/2026
 - Ferramenta: ChatGPT (OpenAI)
 - Objetivo: Auxiliar na compreensão sobre interfaces e nas políticas de cancelamento
-- Parte do projeto afetada: Interface PoliticaDeCancelamento, CancelamentoComAntecedencia, CancelamentoLivre
+- Parte do projeto afetada: Interface PoliticaCancelamento, CancelamentoComAntecedencia, CancelamentoLivre
 - Resultado aproveitado: Possibilidade de adicionar políticas de cancelamentos para determinada reserva, podendo ser livre ou com antecedência
 - Verificações executadas: As implementações foram analisadas e testadas manualmente na classe de aplicacao e nos testes Junit
 - Correções ou decisões da equipe: As sugestões foram avaliadas e decidimos adaptar para a estrutura do nosso projeto.  
+
+### Implementação e verificação da evolução
+
+- Data: 31/10/2026.
+- Ferramenta: Codex (OpenAI).
+- Objetivo: analisar os arquivos do projeto e implementar as lacunas dos cinco
+  tópicos da atividade: modelo/invariantes; composição, polimorfismo e genéricos;
+  requisitos/falhas; testes; processo/documentação.
+- Parte do projeto afetada: domínio, políticas de cancelamento, gerenciador,
+  aplicação de demonstração, novo pacote de repositórios, novo pacote de exceções,
+  testes e documentação. A relação completa está em `docs/evolucao.md`.
+- Resultado aproveitado: contrato `Identificavel`, repositório genérico em memória,
+  exceções específicas compatíveis com as categorias anteriores, busca/transições
+  por id, consulta por período, disponibilidade, validações de entradas e relógio
+  injetável. Reservas concluídas passam a preservar a ocupação histórica; somente
+  canceladas liberam o intervalo. Foram acrescentados testes de limite e integração.
+- Verificações executadas:
+  - Inspeção das fontes de produção e teste, configuração Maven, documentação e diagramas.
+  - `mvnw.cmd -B -Dmaven.repo.local=target/m2 test`: 107 testes aprovados na primeira
+    rodada completa, antes de acrescentar o teste de integração.
+  - `mvnw.cmd -B -Dmaven.repo.local=target/m2 verify`: **108 testes executados,
+    zero falhas, zero erros e zero ignorados**, incluindo o teste de integração;
+    `BUILD SUCCESS` e JAR `target/plataforma-reservas-1.0.0-SNAPSHOT.jar` gerado.
+  - Execução de `br.edu.fagammon.poo.dominio.Aplicacao`: conflito esperado tratado,
+    três participantes, duas quadras, uma reserva concluída, duas canceladas e
+    disponibilidade liberada no horário cancelado; encerramento com código 0.
+  - `git diff --check`: sem erros de espaços em branco.
+- Ambiente: o Java padrão era JRE 8. Foi preparado um Eclipse Temurin JDK 25
+  portátil em `target/tools/`, com SHA256 conferido contra a API de distribuição.
+  `JAVA_HOME` e `MAVEN_USER_HOME` foram definidos apenas para os processos de
+  validação. Dependências e ferramentas ficaram em `target/`. A execução exigiu
+  permissão de rede e repetição fora da restrição que impediu o compilador.
+- Decisões aplicadas para revisão da equipe: manter APIs existentes e versões do
+  build; não impor cadastro prévio nem novas restrições de data à criação/conclusão;
+  documentar o escopo verificável sem afirmar cobertura do enunciado completo,
+  ausente do repositório. Não foram realizados commit, push ou alterações na
+  configuração do Git. A equipe ainda deve revisar as decisões acadêmicas antes
+  da entrega, conforme seu processo normal.
