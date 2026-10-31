@@ -140,3 +140,9 @@ Relatórios de teste são gerados em `target/surefire-reports/`.
 - url commit: https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras/commit/968b873d5bb9386d69ec47963f888fc4af754479
 - branch: master
 - hash: 968b873d5bb9386d69ec47963f888fc4af754479
+
+- ## CheckPoint 2
+- Data: 31/10
+- url commit: https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras/commit/bcef819c9c4542da963e77a75b96b12702f84daa
+- branch: master
+- hash: bcef819c9c4542da963e77a75b96b12702f84daa
