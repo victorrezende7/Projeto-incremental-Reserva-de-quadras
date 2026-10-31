@@ -2,7 +2,7 @@ package br.edu.fagammon.poo.dominio;
 
 import java.util.Objects;
 
-public class Participante {
+public class Participante implements Identificavel {
     private final String idParticipante;
     private final String nome;
 
@@ -17,7 +17,8 @@ public class Participante {
         this.nome = nome;
     }
 
-    public String  getId() {
+    @Override
+    public String getId() {
         return idParticipante;
     }
 

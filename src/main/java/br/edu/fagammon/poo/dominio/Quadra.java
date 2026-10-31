@@ -4,7 +4,7 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Quadra {
+public class Quadra implements Identificavel {
     private final String id;
     private final String nome;
     private final Set<Modalidade> modalidadesPermitidas;
@@ -21,6 +21,9 @@ public class Quadra {
         if(modalidadesPermitidas == null || modalidadesPermitidas.isEmpty()){
             throw new IllegalArgumentException("Quadra precisa de ao menos uma modalidade");
         }
+        if (modalidadesPermitidas.stream().anyMatch(Objects::isNull)) {
+            throw new IllegalArgumentException("Modalidades da quadra não podem ser nulas");
+        }
 
         this.id = id;
         this.nome = nome;
@@ -28,6 +31,7 @@ public class Quadra {
         this.ativa = true;
     }
 
+    @Override
     public String getId(){return id;}
     public String getNome(){return nome;}
 

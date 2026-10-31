@@ -3,10 +3,17 @@ package br.edu.fagammon.poo.servico;
 import br.edu.fagammon.poo.dominio.*;
 import br.edu.fagammon.poo.politica.CancelamentoLivre;
 import br.edu.fagammon.poo.politica.PoliticaCancelamento;
+import br.edu.fagammon.poo.politica.CancelamentoComAntecedencia;
+import br.edu.fagammon.poo.excecao.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -243,6 +250,156 @@ class GerenciadorReservasTest {
         Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe3, Modalidade.FUTSAL,politica);
         PoliticaCancelamento politica = new CancelamentoLivre();
         assertDoesNotThrow(() -> politica.validarCancelamento(re1));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"13,30,14,30", "14,30,15,30", "13,0,16,0", "14,15,14,45", "14,0,15,0"})
+    void deveRecusarTodaSobreposicaoSemAlterarCadastro(int horaInicio, int minutoInicio,
+                                                     int horaFim, int minutoFim) {
+        Reserva original = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        PeriodoReserva conflito = new PeriodoReserva(pe1.inicio().toLocalDate().atTime(horaInicio, minutoInicio),
+                pe1.inicio().toLocalDate().atTime(horaFim, minutoFim));
+        ConflitoReservaException erro = assertThrows(ConflitoReservaException.class,
+                () -> gerenciador.criarReserva(p2, quadra1, conflito, Modalidade.FUTSAL, politica));
+        assertTrue(erro.getMessage().contains(original.getId()));
+        assertEquals(List.of(original), gerenciador.getReservas());
+        assertEquals(StatusReserva.CONFIRMADA, original.getStatusReserva());
+    }
+
+    @Test
+    void devePermitirIntervalosQueSeTocamNasDuasExtremidades() {
+        gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        PeriodoReserva anterior = new PeriodoReserva(pe1.inicio().minusHours(1), pe1.inicio());
+        PeriodoReserva posterior = new PeriodoReserva(pe1.fim(), pe1.fim().plusHours(1));
+        gerenciador.criarReserva(p2, quadra1, anterior, Modalidade.FUTSAL, politica);
+        gerenciador.criarReserva(p3, quadra1, posterior, Modalidade.FUTSAL, politica);
+        assertEquals(3, gerenciador.getReservas().size());
+    }
+
+    @Test
+    void conflitoDeveUsarIdentidadeDaQuadra() {
+        gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Quadra outraInstancia = new Quadra(quadra1.getId(), "Mesmo recurso", EnumSet.of(Modalidade.FUTSAL));
+        assertThrows(ConflitoReservaException.class,
+                () -> gerenciador.criarReserva(p2, outraInstancia, pe1, Modalidade.FUTSAL, politica));
+        assertFalse(gerenciador.estaDisponivel(outraInstancia, pe1, Modalidade.FUTSAL));
+    }
+
+    @Test
+    void reservaConcluidaDevePreservarOcupacaoDoHistorico() {
+        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        gerenciador.concluirReserva(reserva.getId());
+        assertThrows(ConflitoReservaException.class,
+                () -> gerenciador.criarReserva(p2, quadra1, pe1, Modalidade.FUTSAL, politica));
+        assertFalse(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
+        assertEquals(List.of(reserva), gerenciador.buscaPorStatus(StatusReserva.CONCLUIDA));
+    }
+
+    @Test
+    void deveBuscarECancelarReservaPorIdSemRemoverHistorico() {
+        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        assertSame(reserva, gerenciador.buscarReservaPorId(reserva.getId()));
+        gerenciador.cancelarReserva(reserva.getId());
+        assertTrue(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
+        assertEquals(List.of(reserva), gerenciador.buscaPorPeriodo(pe1));
+        assertEquals(StatusReserva.CANCELADA, reserva.getStatusReserva());
+    }
+
+    @Test
+    void falhaNoCancelamentoDevePreservarReservaEOcupacao() {
+        Clock relogio = Clock.fixed(Instant.parse("2026-10-26T12:00:00Z"), ZoneOffset.UTC);
+        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,
+                new CancelamentoComAntecedencia(relogio));
+        assertThrows(CancelamentoNaoPermitidoException.class, () -> gerenciador.cancelarReserva(reserva.getId()));
+        assertEquals(StatusReserva.CONFIRMADA, reserva.getStatusReserva());
+        assertFalse(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
+        assertEquals(1, gerenciador.getReservas().size());
+    }
+
+    @Test
+    void deveRecusarOperacoesComIdentificadorAusente() {
+        assertThrows(EntidadeNaoEncontradaException.class, () -> gerenciador.buscarReservaPorId("ausente"));
+        assertThrows(EntidadeNaoEncontradaException.class, () -> gerenciador.cancelarReserva("ausente"));
+        assertThrows(EntidadeNaoEncontradaException.class, () -> gerenciador.concluirReserva("ausente"));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.buscarReservaPorId(null));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.cancelarReserva(" "));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.concluirReserva(""));
+        assertTrue(gerenciador.getReservas().isEmpty());
+    }
+
+    @Test
+    void deveConsultarPorPeriodoUsandoIntersecaoESemIncluirIntervalosAdjacentes() {
+        Reserva primeira = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Reserva segunda = gerenciador.criarReserva(p2, quadra2, pe1, Modalidade.TENIS, politica);
+        gerenciador.criarReserva(p3, quadra1, pe2, Modalidade.FUTSAL, politica);
+        PeriodoReserva consulta = new PeriodoReserva(pe1.inicio().plusMinutes(30), pe2.inicio());
+        assertEquals(List.of(primeira, segunda), gerenciador.buscaPorPeriodo(consulta));
+    }
+
+    @Test
+    void consultasDevemUsarIdentidadeERetornarVazioSemResultados() {
+        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        assertEquals(List.of(reserva), gerenciador.buscaPorParticipante(new Participante(p1.getId(), "Outro nome")));
+        assertEquals(List.of(reserva), gerenciador.buscaPorQuadra(
+                new Quadra(quadra1.getId(), "Outro nome", EnumSet.of(Modalidade.FUTSAL))));
+        assertTrue(gerenciador.buscaPorParticipante(p2).isEmpty());
+        assertTrue(gerenciador.buscaPorQuadra(quadra2).isEmpty());
+        assertTrue(gerenciador.buscaPorStatus(StatusReserva.CANCELADA).isEmpty());
+        assertTrue(gerenciador.buscaPorPeriodo(pe2).isEmpty());
+    }
+
+    @Test
+    void todasAsConsultasDevemRetornarCopiasNaoModificaveis() {
+        Reserva original = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        List<List<Reserva>> consultas = List.of(gerenciador.getReservas(), gerenciador.buscaPorQuadra(quadra1),
+                gerenciador.buscaPorParticipante(p1), gerenciador.buscaPorStatus(StatusReserva.CONFIRMADA),
+                gerenciador.buscaPorPeriodo(pe1), gerenciador.reservasOrdenadasPorData());
+        consultas.forEach(lista -> assertThrows(UnsupportedOperationException.class, lista::clear));
+        gerenciador.criarReserva(p2, quadra1, pe2, Modalidade.FUTSAL, politica);
+        consultas.forEach(lista -> assertEquals(List.of(original), lista));
+        assertEquals(2, gerenciador.getReservas().size());
+    }
+
+    @Test
+    void ordenacaoDeveSerEstavelSemAlterarOrdemDeCadastro() {
+        Reserva tardia = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL, politica);
+        Reserva primeira = gerenciador.criarReserva(p2, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Reserva empate = gerenciador.criarReserva(p3, quadra2, pe1, Modalidade.TENIS, politica);
+        assertEquals(List.of(primeira, empate, tardia), gerenciador.reservasOrdenadasPorData());
+        assertEquals(List.of(tardia, primeira, empate), gerenciador.getReservas());
+    }
+
+    @Test
+    void deveValidarParametrosObrigatoriosDasConsultas() {
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.buscaPorQuadra(null));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.buscaPorParticipante(null));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.buscaPorStatus(null));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.buscaPorPeriodo(null));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.estaDisponivel(null, pe1, Modalidade.FUTSAL));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.estaDisponivel(quadra1, null, Modalidade.FUTSAL));
+        assertThrows(IllegalArgumentException.class, () -> gerenciador.estaDisponivel(quadra1, pe1, null));
+    }
+
+    @Test
+    void disponibilidadeDeveRespeitarAtivacaoEModalidade() {
+        assertTrue(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
+        assertFalse(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.TENIS));
+        quadra1.desativar();
+        assertFalse(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
+        assertThrows(IllegalArgumentException.class,
+                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica));
+        quadra1.ativar();
+        assertTrue(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
+        assertTrue(gerenciador.getReservas().isEmpty());
+    }
+
+    @Test
+    void criacaoInvalidaNaoDeveDeixarReservaParcial() {
+        assertThrows(IllegalArgumentException.class,
+                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.TENIS, politica));
+        assertThrows(IllegalArgumentException.class,
+                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, null));
+        assertTrue(gerenciador.getReservas().isEmpty());
     }
 }
 

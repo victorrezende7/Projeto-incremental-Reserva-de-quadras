@@ -3,6 +3,7 @@ package br.edu.fagammon.poo.dominio;
 import org.junit.jupiter.api.Test;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -99,5 +100,23 @@ public class QuadraTest {
         Quadra q2 = new Quadra("02", "Quadra 1", EnumSet.of(Modalidade.FUTSAL));
 
         assertNotEquals(q1, q2);
+    }
+
+    @Test
+    void deveProtegerModalidadesContraAlteracaoDaColecaoOriginal() {
+        Set<Modalidade> modalidades = EnumSet.of(Modalidade.FUTSAL);
+        Quadra quadra = new Quadra("01", "Quadra", modalidades);
+        modalidades.clear();
+        modalidades.add(Modalidade.TENIS);
+        assertTrue(quadra.aceitaModalidade(Modalidade.FUTSAL));
+        assertFalse(quadra.aceitaModalidade(Modalidade.TENIS));
+    }
+
+    @Test
+    void deveRecusarConjuntoComModalidadeNula() {
+        Set<Modalidade> modalidades = new HashSet<>();
+        modalidades.add(Modalidade.FUTSAL);
+        modalidades.add(null);
+        assertThrows(IllegalArgumentException.class, () -> new Quadra("01", "Quadra", modalidades));
     }
 }

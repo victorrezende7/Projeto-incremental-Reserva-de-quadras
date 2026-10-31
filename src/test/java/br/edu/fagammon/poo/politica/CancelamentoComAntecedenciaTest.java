@@ -1,45 +1,92 @@
 package br.edu.fagammon.poo.politica;
 
 import br.edu.fagammon.poo.dominio.*;
-import br.edu.fagammon.poo.servico.GerenciadorReservas;
-import org.junit.jupiter.api.BeforeEach;
+import br.edu.fagammon.poo.excecao.CancelamentoNaoPermitidoException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.EnumSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class CancelamentoComAntecedenciaTest {
-    private Participante p1;
-    private Quadra q1;
-    private Quadra q2;
-    private PeriodoReserva pe1;
-    private LocalDateTime inicioBase;
-    private PoliticaCancelamento politica;
-    private GerenciadorReservas gerenciador;
+    private final Clock relogio = Clock.fixed(
+            Instant.parse("2026-10-31T12:00:00Z"), ZoneId.of("America/Sao_Paulo"));
+    private final LocalDateTime agora = LocalDateTime.now(relogio);
 
-    @BeforeEach
-    void preparaTeste(){
-        p1 = new Participante("01","Victor");
-        q1 = new Quadra("01","Quadra de Futsal", EnumSet.of(Modalidade.FUTSAL));
-        q2 = new Quadra("02","Quadra de Tenis",EnumSet.of(Modalidade.TENIS));
-        inicioBase = LocalDateTime.now();
-        politica = new CancelamentoComAntecedencia();
-        gerenciador = new GerenciadorReservas();
+    private Reserva reserva(LocalDateTime inicio, PoliticaCancelamento politica) {
+        return new Reserva(new Participante("01", "Victor"),
+                new Quadra("01", "Quadra de Futsal", EnumSet.of(Modalidade.FUTSAL)),
+                new PeriodoReserva(inicio, inicio.plusHours(1)), Modalidade.FUTSAL, politica);
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {24, 25, 48})
+    void devePermitirCancelamentoAPartirDe24Horas(long horas) {
+        Reserva reserva = reserva(agora.plusHours(horas), new CancelamentoComAntecedencia(relogio));
+        reserva.cancelar();
+        assertEquals(StatusReserva.CANCELADA, reserva.getStatusReserva());
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-24, 0, 1, 23})
+    void deveRecusarCancelamentoSemAntecedenciaMinimaEManterEstado(long horas) {
+        Reserva reserva = reserva(agora.plusHours(horas), new CancelamentoComAntecedencia(relogio));
+        assertThrows(CancelamentoNaoPermitidoException.class, reserva::cancelar);
+        assertEquals(StatusReserva.CONFIRMADA, reserva.getStatusReserva());
     }
 
     @Test
-    void devePermitirCancelamentocomMaisde24horas(){
-        pe1 = new PeriodoReserva(inicioBase.plusHours(48),inicioBase.plusHours(50));
-        Reserva re1 = gerenciador.criarReserva(p1,q1,pe1,Modalidade.FUTSAL,politica);
-        assertDoesNotThrow(()->re1.cancelar());
+    void deveRecusarUmNanossegundoAbaixoDoLimite() {
+        Reserva reserva = reserva(agora.plusHours(24).minusNanos(1), new CancelamentoComAntecedencia(relogio));
+        assertThrows(CancelamentoNaoPermitidoException.class, reserva::cancelar);
+        assertEquals(StatusReserva.CONFIRMADA, reserva.getStatusReserva());
     }
 
     @Test
-    void deveRecusarCancelamentoComMenosDe24Horas(){
-        pe1 = new PeriodoReserva(inicioBase,inicioBase.plusHours(10));
-        Reserva re1 = gerenciador.criarReserva(p1,q1,pe1,Modalidade.FUTSAL,politica);
-        assertThrows(IllegalStateException.class,()->re1.cancelar());
+    void deveAceitarUmNanossegundoAcimaDoLimite() {
+        Reserva reserva = reserva(agora.plusHours(24).plusNanos(1), new CancelamentoComAntecedencia(relogio));
+        assertDoesNotThrow(reserva::cancelar);
+    }
+
+    @Test
+    void deveRespeitarAntecedenciaConfigurada() {
+        PoliticaCancelamento politica = new CancelamentoComAntecedencia(Duration.ofHours(2), relogio);
+        assertDoesNotThrow(reserva(agora.plusHours(2), politica)::cancelar);
+        assertThrows(CancelamentoNaoPermitidoException.class,
+                reserva(agora.plusHours(2).minusNanos(1), politica)::cancelar);
+    }
+
+    @Test
+    void deveAceitarAntecedenciaZeroSemLiberarCancelamentoNoPassado() {
+        PoliticaCancelamento politica = new CancelamentoComAntecedencia(Duration.ZERO, relogio);
+        assertDoesNotThrow(reserva(agora, politica)::cancelar);
+        assertThrows(CancelamentoNaoPermitidoException.class, reserva(agora.minusNanos(1), politica)::cancelar);
+    }
+
+    @Test
+    void deveRecusarConfiguracaoInvalida() {
+        assertThrows(IllegalArgumentException.class, () -> new CancelamentoComAntecedencia(null));
+        assertThrows(IllegalArgumentException.class, () -> new CancelamentoComAntecedencia(null, relogio));
+        assertThrows(IllegalArgumentException.class, () -> new CancelamentoComAntecedencia(Duration.ofHours(-1), relogio));
+        assertThrows(IllegalArgumentException.class, () -> new CancelamentoComAntecedencia(Duration.ZERO, null));
+    }
+
+    @Test
+    void deveRecusarReservaNula() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new CancelamentoComAntecedencia(relogio).validarCancelamento(null));
+    }
+
+    @Test
+    void construtorPadraoDeveContinuarDisponivel() {
+        assertDoesNotThrow(() -> new CancelamentoComAntecedencia()
+                .validarCancelamento(reserva(LocalDateTime.now().plusDays(3), new CancelamentoLivre())));
     }
 }
