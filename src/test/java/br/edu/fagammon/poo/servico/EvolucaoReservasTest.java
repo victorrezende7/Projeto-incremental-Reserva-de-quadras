@@ -6,10 +6,13 @@ import br.edu.fagammon.poo.excecao.EntidadeDuplicadaException;
 import br.edu.fagammon.poo.excecao.TransicaoReservaInvalidaException;
 import br.edu.fagammon.poo.politica.CancelamentoComAntecedencia;
 import br.edu.fagammon.poo.politica.CancelamentoLivre;
+import br.edu.fagammon.poo.politica.PoliticaPreco;
+import br.edu.fagammon.poo.politica.PrecoFixoPorHora;
 import br.edu.fagammon.poo.repositorio.Repositorio;
 import br.edu.fagammon.poo.repositorio.RepositorioEmMemoria;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -27,6 +30,7 @@ class EvolucaoReservasTest {
         participantes.adicionar(new Participante("p1", "Ana"));
         participantes.adicionar(new Participante("p2", "Bia"));
         quadras.adicionar(new Quadra("q1", "Poliesportiva", EnumSet.of(Modalidade.FUTSAL, Modalidade.VOLEIBOL)));
+        PoliticaPreco precoFixo = new PrecoFixoPorHora(new BigDecimal("50"));
         assertThrows(EntidadeDuplicadaException.class,
                 () -> quadras.adicionar(new Quadra("q1", "Outra", EnumSet.of(Modalidade.TENIS))));
 
@@ -39,14 +43,14 @@ class EvolucaoReservasTest {
         GerenciadorReservas gerenciador = new GerenciadorReservas();
 
         Reserva original = gerenciador.criarReserva(ana, quadra, periodo, Modalidade.FUTSAL,
-                new CancelamentoComAntecedencia(relogio));
+                new CancelamentoComAntecedencia(relogio),precoFixo);
         assertThrows(ConflitoReservaException.class,
-                () -> gerenciador.criarReserva(bia, quadra, periodo, Modalidade.VOLEIBOL, new CancelamentoLivre()));
+                () -> gerenciador.criarReserva(bia, quadra, periodo, Modalidade.VOLEIBOL, new CancelamentoLivre(),precoFixo));
         assertEquals(List.of(original), gerenciador.getReservas());
 
         gerenciador.cancelarReserva(original.getId());
         assertTrue(gerenciador.estaDisponivel(quadra, periodo, Modalidade.VOLEIBOL));
-        Reserva substituta = gerenciador.criarReserva(bia, quadra, periodo, Modalidade.VOLEIBOL, new CancelamentoLivre());
+        Reserva substituta = gerenciador.criarReserva(bia, quadra, periodo, Modalidade.VOLEIBOL, new CancelamentoLivre(),precoFixo);
         gerenciador.concluirReserva(substituta.getId());
         assertThrows(TransicaoReservaInvalidaException.class, () -> gerenciador.cancelarReserva(substituta.getId()));
         assertFalse(gerenciador.estaDisponivel(quadra, periodo, Modalidade.FUTSAL));
@@ -54,9 +58,9 @@ class EvolucaoReservasTest {
         quadra.desativar();
         PeriodoReserva seguinte = new PeriodoReserva(periodo.fim(), periodo.fim().plusHours(1));
         assertThrows(IllegalArgumentException.class,
-                () -> gerenciador.criarReserva(ana, quadra, seguinte, Modalidade.FUTSAL, new CancelamentoLivre()));
+                () -> gerenciador.criarReserva(ana, quadra, seguinte, Modalidade.FUTSAL, new CancelamentoLivre(),precoFixo));
         quadra.ativar();
-        Reserva ultima = gerenciador.criarReserva(ana, quadra, seguinte, Modalidade.FUTSAL, new CancelamentoLivre());
+        Reserva ultima = gerenciador.criarReserva(ana, quadra, seguinte, Modalidade.FUTSAL, new CancelamentoLivre(),precoFixo);
         gerenciador.cancelarReserva(ultima.getId());
 
         assertEquals(List.of(original, substituta, ultima), gerenciador.reservasOrdenadasPorData());

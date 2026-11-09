@@ -5,7 +5,9 @@ import br.edu.fagammon.poo.excecao.ConflitoReservaException;
 import br.edu.fagammon.poo.politica.PoliticaCancelamento;
 import br.edu.fagammon.poo.repositorio.Repositorio;
 import br.edu.fagammon.poo.repositorio.RepositorioEmMemoria;
+import br.edu.fagammon.poo.politica.PoliticaPreco;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +18,10 @@ public class GerenciadorReservas {
         this.reservas = new RepositorioEmMemoria<>();
     }
 
-    public Reserva criarReserva(Participante participante, Quadra quadra, PeriodoReserva periodo, Modalidade modalidade, PoliticaCancelamento politicaCancelamento) {
-        Reserva novaReserva  = new Reserva(participante,quadra,periodo,modalidade, politicaCancelamento);
+    public Reserva criarReserva(Participante participante, Quadra quadra, PeriodoReserva periodo, Modalidade modalidade,
+                                PoliticaCancelamento politicaCancelamento, PoliticaPreco politicaPreco) {
+        BigDecimal preco = politicaPreco.calcularPreco(periodo,modalidade);
+        Reserva novaReserva  = new Reserva(participante,quadra,periodo,modalidade, politicaCancelamento,preco);
         encontrarConflito(quadra, periodo).ifPresent(existente -> {
             throw new ConflitoReservaException(existente.getId());
         });

@@ -218,3 +218,12 @@ Registre decisões que afetem o modelo, a API, as dependências ou a evolução.
   restrição de execução falhou no compilador e foi repetida com permissão.
 - Evidência: relatórios em `target/surefire-reports/` e resultado final registrado
   em `docs/IA_USAGE.md`. Não foram realizados commit ou push nesta implementação.
+
+
+### Criar uma política de preço baseado em modalidades especificas
+- Data: 07/11/2026
+- Problema observado: Criar uma politica de preço com base em modalidades
+- Alternativas consideradas: utilizar ifs e else, utilizar Map
+- Decisão: Utilizar Map para listar as modalidades que vão ter preços diferentes dos preços fixos.
+- Consequências: Modalidade Tenis e Society possuem preços por horas diferentes das demais.
+- Teste ou evidência que verifica a decisão: `PrecoPorModalidade`

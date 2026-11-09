@@ -3,6 +3,7 @@ package br.edu.fagammon.poo.politica;
 import br.edu.fagammon.poo.dominio.*;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 
@@ -15,7 +16,7 @@ class CancelamentoLivreTest {
         Reserva reserva = new Reserva(new Participante("p1", "Ana"),
                 new Quadra("q1", "Tênis", EnumSet.of(Modalidade.TENIS)),
                 new PeriodoReserva(LocalDateTime.of(2026, 1, 1, 10, 0),
-                        LocalDateTime.of(2026, 1, 1, 11, 0)), Modalidade.TENIS, politica);
+                        LocalDateTime.of(2026, 1, 1, 11, 0)), Modalidade.TENIS, politica,new BigDecimal("50"));
         reserva.cancelar();
         assertEquals(StatusReserva.CANCELADA, reserva.getStatusReserva());
     }

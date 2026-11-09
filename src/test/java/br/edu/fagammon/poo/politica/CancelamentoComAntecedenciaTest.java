@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -23,7 +24,7 @@ public class CancelamentoComAntecedenciaTest {
     private Reserva reserva(LocalDateTime inicio, PoliticaCancelamento politica) {
         return new Reserva(new Participante("01", "Victor"),
                 new Quadra("01", "Quadra de Futsal", EnumSet.of(Modalidade.FUTSAL)),
-                new PeriodoReserva(inicio, inicio.plusHours(1)), Modalidade.FUTSAL, politica);
+                new PeriodoReserva(inicio, inicio.plusHours(1)), Modalidade.FUTSAL, politica,new BigDecimal("50"));
     }
 
     @ParameterizedTest

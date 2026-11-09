@@ -1,15 +1,14 @@
 package br.edu.fagammon.poo.servico;
 
 import br.edu.fagammon.poo.dominio.*;
-import br.edu.fagammon.poo.politica.CancelamentoLivre;
-import br.edu.fagammon.poo.politica.PoliticaCancelamento;
-import br.edu.fagammon.poo.politica.CancelamentoComAntecedencia;
+import br.edu.fagammon.poo.politica.*;
 import br.edu.fagammon.poo.excecao.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -32,6 +31,7 @@ class GerenciadorReservasTest {
     private Quadra quadra2;
     private Quadra quadra3;
     private PoliticaCancelamento politica;
+    private PoliticaPreco precoFixo;
 
     @BeforeEach
     void configurar() {
@@ -67,13 +67,14 @@ class GerenciadorReservasTest {
         );
 
         politica = new CancelamentoLivre();
+        precoFixo = new PrecoFixoPorHora(new BigDecimal("50"));
     }
 
 
     @Test
     void deveCriarReservaValida() {
         gerenciador.criarReserva(
-                p1, quadra1, pe1, Modalidade.FUTSAL,politica
+                p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         assertEquals(1, gerenciador.getReservas().size());
@@ -87,12 +88,12 @@ class GerenciadorReservasTest {
     @Test
     void deveImpedirReservasConflitantes() {
         gerenciador.criarReserva(
-                p1, quadra1, pe1, Modalidade.FUTSAL,politica
+                p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         assertThrows(IllegalArgumentException.class, () -> {
             gerenciador.criarReserva(
-                    p2, quadra1, pe1, Modalidade.FUTSAL,politica
+                    p2, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
             );
         });
 
@@ -103,11 +104,11 @@ class GerenciadorReservasTest {
     @Test
     void devePermitirHorariosConsecutivos() {
         gerenciador.criarReserva(
-                p1, quadra1, pe1, Modalidade.FUTSAL,politica
+                p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         gerenciador.criarReserva(
-                p2, quadra1, pe2, Modalidade.FUTSAL,politica
+                p2, quadra1, pe2, Modalidade.FUTSAL,politica,precoFixo
         );
 
         assertEquals(2, gerenciador.getReservas().size());
@@ -117,11 +118,11 @@ class GerenciadorReservasTest {
     @Test
     void devePermitirMesmoHorarioEmQuadrasDiferentes() {
         gerenciador.criarReserva(
-                p1, quadra1, pe1, Modalidade.FUTSAL,politica
+                p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         gerenciador.criarReserva(
-                p2, quadra2, pe1, Modalidade.TENIS,politica
+                p2, quadra2, pe1, Modalidade.TENIS,politica,precoFixo
         );
 
         assertEquals(2, gerenciador.getReservas().size());
@@ -131,14 +132,14 @@ class GerenciadorReservasTest {
     @Test
     void devePermitirReservaAposCancelamento() {
         gerenciador.criarReserva(
-                p1, quadra1, pe1, Modalidade.FUTSAL,politica
+                p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         Reserva primeira = gerenciador.getReservas().get(0);
         primeira.cancelar();
 
         gerenciador.criarReserva(
-                p2, quadra1, pe1, Modalidade.FUTSAL,politica
+                p2, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         assertEquals(2, gerenciador.getReservas().size());
@@ -158,11 +159,11 @@ class GerenciadorReservasTest {
     @Test
     void deveRetornarReservasCadastradas() {
         gerenciador.criarReserva(
-                p1, quadra1, pe1, Modalidade.FUTSAL,politica
+                p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         gerenciador.criarReserva(
-                p2, quadra1, pe2, Modalidade.FUTSAL,politica
+                p2, quadra1, pe2, Modalidade.FUTSAL,politica,precoFixo
         );
 
         List<Reserva> lista = gerenciador.getReservas();
@@ -176,7 +177,7 @@ class GerenciadorReservasTest {
     @Test
     void naoDevePermitirModificarListaExternamente() {
         gerenciador.criarReserva(
-                p1, quadra1, pe1, Modalidade.FUTSAL,politica
+                p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo
         );
 
         List<Reserva> lista = gerenciador.getReservas();
@@ -190,9 +191,9 @@ class GerenciadorReservasTest {
 
     @Test
     void deveBuscarReservasPorQuadra() {
-        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,politica);
-        Reserva re2 = gerenciador.criarReserva(p2, quadra1, pe2, Modalidade.FUTSAL,politica);
-        Reserva re3 = gerenciador.criarReserva(p3, quadra2, pe2, Modalidade.TENIS,politica);
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re2 = gerenciador.criarReserva(p2, quadra1, pe2, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re3 = gerenciador.criarReserva(p3, quadra2, pe2, Modalidade.TENIS,politica,precoFixo);
 
         List<Reserva> resultado = gerenciador.buscaPorQuadra(quadra1);
         assertEquals(2, resultado.size());
@@ -203,9 +204,9 @@ class GerenciadorReservasTest {
 
     @Test
     void deveBuscarReservasPorParticipante() {
-        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,politica);
-        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL,politica);
-        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe2, Modalidade.TENIS,politica);
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe2, Modalidade.TENIS,politica,precoFixo);
         List<Reserva> resultado = gerenciador.buscaPorParticipante(p1);
         assertEquals(2, resultado.size());
         assertTrue(resultado.contains(re1));
@@ -215,9 +216,9 @@ class GerenciadorReservasTest {
 
     @Test
     void deveBuscarReservaPoRStatus() {
-        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,politica);
-        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL,politica);
-        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe2, Modalidade.TENIS,politica);
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe2, Modalidade.TENIS,politica,precoFixo);
         re1.cancelar();
         re3.cancelar();
         List<Reserva> resultado = gerenciador.buscaPorStatus(StatusReserva.CANCELADA);
@@ -235,9 +236,9 @@ class GerenciadorReservasTest {
 
     @Test
     void deveOrdernarPorData(){
-        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe3, Modalidade.FUTSAL,politica);
-        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL,politica);
-        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe1, Modalidade.TENIS,politica);
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe3, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re2 = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL,politica,precoFixo);
+        Reserva re3 = gerenciador.criarReserva(p2, quadra2, pe1, Modalidade.TENIS,politica,precoFixo);
         List<Reserva> resultado = gerenciador.reservasOrdenadasPorData();
         assertEquals(3, resultado.size());
         assertEquals(re2, resultado.get(1));
@@ -247,7 +248,7 @@ class GerenciadorReservasTest {
 
     @Test
     void devePermitirCancelamentoLivre() {
-        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe3, Modalidade.FUTSAL,politica);
+        Reserva re1 = gerenciador.criarReserva(p1, quadra1, pe3, Modalidade.FUTSAL,politica,precoFixo);
         PoliticaCancelamento politica = new CancelamentoLivre();
         assertDoesNotThrow(() -> politica.validarCancelamento(re1));
     }
@@ -256,11 +257,11 @@ class GerenciadorReservasTest {
     @CsvSource({"13,30,14,30", "14,30,15,30", "13,0,16,0", "14,15,14,45", "14,0,15,0"})
     void deveRecusarTodaSobreposicaoSemAlterarCadastro(int horaInicio, int minutoInicio,
                                                      int horaFim, int minutoFim) {
-        Reserva original = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Reserva original = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
         PeriodoReserva conflito = new PeriodoReserva(pe1.inicio().toLocalDate().atTime(horaInicio, minutoInicio),
                 pe1.inicio().toLocalDate().atTime(horaFim, minutoFim));
         ConflitoReservaException erro = assertThrows(ConflitoReservaException.class,
-                () -> gerenciador.criarReserva(p2, quadra1, conflito, Modalidade.FUTSAL, politica));
+                () -> gerenciador.criarReserva(p2, quadra1, conflito, Modalidade.FUTSAL, politica,precoFixo));
         assertTrue(erro.getMessage().contains(original.getId()));
         assertEquals(List.of(original), gerenciador.getReservas());
         assertEquals(StatusReserva.CONFIRMADA, original.getStatusReserva());
@@ -268,36 +269,36 @@ class GerenciadorReservasTest {
 
     @Test
     void devePermitirIntervalosQueSeTocamNasDuasExtremidades() {
-        gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
         PeriodoReserva anterior = new PeriodoReserva(pe1.inicio().minusHours(1), pe1.inicio());
         PeriodoReserva posterior = new PeriodoReserva(pe1.fim(), pe1.fim().plusHours(1));
-        gerenciador.criarReserva(p2, quadra1, anterior, Modalidade.FUTSAL, politica);
-        gerenciador.criarReserva(p3, quadra1, posterior, Modalidade.FUTSAL, politica);
+        gerenciador.criarReserva(p2, quadra1, anterior, Modalidade.FUTSAL, politica,precoFixo);
+        gerenciador.criarReserva(p3, quadra1, posterior, Modalidade.FUTSAL, politica,precoFixo);
         assertEquals(3, gerenciador.getReservas().size());
     }
 
     @Test
     void conflitoDeveUsarIdentidadeDaQuadra() {
-        gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
         Quadra outraInstancia = new Quadra(quadra1.getId(), "Mesmo recurso", EnumSet.of(Modalidade.FUTSAL));
         assertThrows(ConflitoReservaException.class,
-                () -> gerenciador.criarReserva(p2, outraInstancia, pe1, Modalidade.FUTSAL, politica));
+                () -> gerenciador.criarReserva(p2, outraInstancia, pe1, Modalidade.FUTSAL, politica,precoFixo));
         assertFalse(gerenciador.estaDisponivel(outraInstancia, pe1, Modalidade.FUTSAL));
     }
 
     @Test
     void reservaConcluidaDevePreservarOcupacaoDoHistorico() {
-        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,politica,precoFixo);
         gerenciador.concluirReserva(reserva.getId());
         assertThrows(ConflitoReservaException.class,
-                () -> gerenciador.criarReserva(p2, quadra1, pe1, Modalidade.FUTSAL, politica));
+                () -> gerenciador.criarReserva(p2, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo));
         assertFalse(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
         assertEquals(List.of(reserva), gerenciador.buscaPorStatus(StatusReserva.CONCLUIDA));
     }
 
     @Test
     void deveBuscarECancelarReservaPorIdSemRemoverHistorico() {
-        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
         assertSame(reserva, gerenciador.buscarReservaPorId(reserva.getId()));
         gerenciador.cancelarReserva(reserva.getId());
         assertTrue(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
@@ -309,7 +310,7 @@ class GerenciadorReservasTest {
     void falhaNoCancelamentoDevePreservarReservaEOcupacao() {
         Clock relogio = Clock.fixed(Instant.parse("2026-10-26T12:00:00Z"), ZoneOffset.UTC);
         Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL,
-                new CancelamentoComAntecedencia(relogio));
+                new CancelamentoComAntecedencia(relogio),precoFixo);
         assertThrows(CancelamentoNaoPermitidoException.class, () -> gerenciador.cancelarReserva(reserva.getId()));
         assertEquals(StatusReserva.CONFIRMADA, reserva.getStatusReserva());
         assertFalse(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
@@ -329,16 +330,16 @@ class GerenciadorReservasTest {
 
     @Test
     void deveConsultarPorPeriodoUsandoIntersecaoESemIncluirIntervalosAdjacentes() {
-        Reserva primeira = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
-        Reserva segunda = gerenciador.criarReserva(p2, quadra2, pe1, Modalidade.TENIS, politica);
-        gerenciador.criarReserva(p3, quadra1, pe2, Modalidade.FUTSAL, politica);
+        Reserva primeira = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
+        Reserva segunda = gerenciador.criarReserva(p2, quadra2, pe1, Modalidade.TENIS, politica,precoFixo);
+        gerenciador.criarReserva(p3, quadra1, pe2, Modalidade.FUTSAL, politica,precoFixo);
         PeriodoReserva consulta = new PeriodoReserva(pe1.inicio().plusMinutes(30), pe2.inicio());
         assertEquals(List.of(primeira, segunda), gerenciador.buscaPorPeriodo(consulta));
     }
 
     @Test
     void consultasDevemUsarIdentidadeERetornarVazioSemResultados() {
-        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Reserva reserva = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
         assertEquals(List.of(reserva), gerenciador.buscaPorParticipante(new Participante(p1.getId(), "Outro nome")));
         assertEquals(List.of(reserva), gerenciador.buscaPorQuadra(
                 new Quadra(quadra1.getId(), "Outro nome", EnumSet.of(Modalidade.FUTSAL))));
@@ -350,21 +351,21 @@ class GerenciadorReservasTest {
 
     @Test
     void todasAsConsultasDevemRetornarCopiasNaoModificaveis() {
-        Reserva original = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica);
+        Reserva original = gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
         List<List<Reserva>> consultas = List.of(gerenciador.getReservas(), gerenciador.buscaPorQuadra(quadra1),
                 gerenciador.buscaPorParticipante(p1), gerenciador.buscaPorStatus(StatusReserva.CONFIRMADA),
                 gerenciador.buscaPorPeriodo(pe1), gerenciador.reservasOrdenadasPorData());
         consultas.forEach(lista -> assertThrows(UnsupportedOperationException.class, lista::clear));
-        gerenciador.criarReserva(p2, quadra1, pe2, Modalidade.FUTSAL, politica);
+        gerenciador.criarReserva(p2, quadra1, pe2, Modalidade.FUTSAL, politica,precoFixo);
         consultas.forEach(lista -> assertEquals(List.of(original), lista));
         assertEquals(2, gerenciador.getReservas().size());
     }
 
     @Test
     void ordenacaoDeveSerEstavelSemAlterarOrdemDeCadastro() {
-        Reserva tardia = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL, politica);
-        Reserva primeira = gerenciador.criarReserva(p2, quadra1, pe1, Modalidade.FUTSAL, politica);
-        Reserva empate = gerenciador.criarReserva(p3, quadra2, pe1, Modalidade.TENIS, politica);
+        Reserva tardia = gerenciador.criarReserva(p1, quadra1, pe2, Modalidade.FUTSAL, politica,precoFixo);
+        Reserva primeira = gerenciador.criarReserva(p2, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo);
+        Reserva empate = gerenciador.criarReserva(p3, quadra2, pe1, Modalidade.TENIS, politica,precoFixo);
         assertEquals(List.of(primeira, empate, tardia), gerenciador.reservasOrdenadasPorData());
         assertEquals(List.of(tardia, primeira, empate), gerenciador.getReservas());
     }
@@ -387,7 +388,7 @@ class GerenciadorReservasTest {
         quadra1.desativar();
         assertFalse(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
         assertThrows(IllegalArgumentException.class,
-                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica));
+                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, politica,precoFixo));
         quadra1.ativar();
         assertTrue(gerenciador.estaDisponivel(quadra1, pe1, Modalidade.FUTSAL));
         assertTrue(gerenciador.getReservas().isEmpty());
@@ -396,9 +397,9 @@ class GerenciadorReservasTest {
     @Test
     void criacaoInvalidaNaoDeveDeixarReservaParcial() {
         assertThrows(IllegalArgumentException.class,
-                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.TENIS, politica));
+                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.TENIS, politica,precoFixo));
         assertThrows(IllegalArgumentException.class,
-                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, null));
+                () -> gerenciador.criarReserva(p1, quadra1, pe1, Modalidade.FUTSAL, null,precoFixo));
         assertTrue(gerenciador.getReservas().isEmpty());
     }
 }

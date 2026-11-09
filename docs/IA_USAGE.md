@@ -113,3 +113,14 @@ documentação ou decisões.
   ausente do repositório. Não foram realizados commit, push ou alterações na
   configuração do Git. A equipe ainda deve revisar as decisões acadêmicas antes
   da entrega, conforme seu processo normal.
+
+
+### Ajuda na implementação de políticas de preço
+
+- Data: 07/11/2026
+- Ferramenta: ChatGPT
+- Objetivo: Entender como funciona o BigDecimal para a implemtação de políticas de preços
+- Parte do projeto afetada: A criação das reservas, que agora necessitam da seleção de uma politica de preço específica, podendo ser fixa por hora ou por modalidade
+- Resultado aproveitado: Aprendizagem sobre BigDecimal, Map e mais conhecimento sobre polimorfismo e interfaces.
+- Verificações executadas: As implementações foram analisadas e testadas manualmente na classe de aplicacao e nos testes Junit. 
+- Correções ou decisões da equipe: Utilizar essa ajuda para implementar a interface `PoliticaPreco` e as classes `PrecoFixoPorHora`,`PrecoPorModalidade`.

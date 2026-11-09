@@ -30,6 +30,10 @@ public class CancelamentoComAntecedencia implements PoliticaCancelamento {
         this.relogio = relogio;
     }
 
+    public Duration getAntecedenciaMinima() {
+        return antecedenciaMinima;
+    }
+
     @Override
     public void validarCancelamento(Reserva reserva) {
         if (reserva == null) {

@@ -1,0 +1,13 @@
+{
+  "participantes" : [ {
+    "id" : "01",
+    "nome" : "Joao"
+  } ],
+  "quadras" : [ {
+    "id" : "01",
+    "nome" : "Quadra de Futsal",
+    "modalidades" : [ "FUTSAL" ],
+    "ativa" : true
+  } ],
+  "reservas" : [ ]
+}
