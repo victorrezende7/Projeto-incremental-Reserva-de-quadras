@@ -1,13 +1,84 @@
 {
   "participantes" : [ {
     "id" : "01",
-    "nome" : "Joao"
+    "nome" : "Victor"
+  }, {
+    "id" : "02",
+    "nome" : "Marcos"
+  }, {
+    "id" : "03",
+    "nome" : "Lucas"
   } ],
   "quadras" : [ {
     "id" : "01",
-    "nome" : "Quadra de Futsal",
-    "modalidades" : [ "FUTSAL" ],
+    "nome" : "Quadra de Futsal e Volei",
+    "modalidades" : [ "FUTSAL", "VOLEIBOL" ],
+    "ativa" : true
+  }, {
+    "id" : "02",
+    "nome" : "Quadra de Tenis",
+    "modalidades" : [ "TENIS" ],
+    "ativa" : true
+  }, {
+    "id" : "03",
+    "nome" : "Campo Society",
+    "modalidades" : [ "SOCIETY" ],
     "ativa" : true
   } ],
-  "reservas" : [ ]
+  "reservas" : [ {
+    "id" : "2f812a68-6a2e-4c25-9de8-182768197104",
+    "participanteId" : "01",
+    "quadraId" : "01",
+    "inicio" : "2026-11-12T14:00",
+    "fim" : "2026-11-12T15:00",
+    "modalidade" : "FUTSAL",
+    "status" : "CONFIRMADA",
+    "preco" : 50.00,
+    "politicaCancelamento" : "LIVRE",
+    "antecedenciaMinutos" : null
+  }, {
+    "id" : "e827ebd8-f7af-41d7-ad1c-36b6f2dba31f",
+    "participanteId" : "02",
+    "quadraId" : "02",
+    "inicio" : "2026-11-12T15:00",
+    "fim" : "2026-11-12T16:00",
+    "modalidade" : "TENIS",
+    "status" : "CONFIRMADA",
+    "preco" : 80.00,
+    "politicaCancelamento" : "LIVRE",
+    "antecedenciaMinutos" : null
+  }, {
+    "id" : "6a0b85a1-86f8-4bad-b440-cc6a54f7896b",
+    "participanteId" : "03",
+    "quadraId" : "03",
+    "inicio" : "2026-11-12T18:30",
+    "fim" : "2026-11-12T20:00",
+    "modalidade" : "SOCIETY",
+    "status" : "CONFIRMADA",
+    "preco" : 150.00,
+    "politicaCancelamento" : "ANTECEDENCIA",
+    "antecedenciaMinutos" : 1440
+  }, {
+    "id" : "3b069ec8-e4f7-403e-953c-cb4256a9723c",
+    "participanteId" : "01",
+    "quadraId" : "02",
+    "inicio" : "2026-11-12T16:00",
+    "fim" : "2026-11-12T17:00",
+    "modalidade" : "TENIS",
+    "status" : "CONFIRMADA",
+    "preco" : 80.00,
+    "politicaCancelamento" : "LIVRE",
+    "antecedenciaMinutos" : null
+  }, {
+    "id" : "ec95fc04-2ca3-40a8-9e41-f41203aeccef",
+    "participanteId" : "02",
+    "quadraId" : "03",
+    "inicio" : "2026-11-13T10:00",
+    "fim" : "2026-11-13T12:00",
+    "modalidade" : "SOCIETY",
+    "status" : "CONFIRMADA",
+    "preco" : 200.00,
+    "politicaCancelamento" : "LIVRE",
+    "antecedenciaMinutos" : null
+  } ]
 }

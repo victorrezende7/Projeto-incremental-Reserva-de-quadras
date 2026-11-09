@@ -102,4 +102,35 @@ public class GerenciadorReservas {
             throw new IllegalArgumentException(campo + " não pode ser nulo");
         }
     }
+
+    public static GerenciadorReservas restaurarReservas(
+            List<Reserva> reservasSalvas
+    ) {
+        if (reservasSalvas == null) {
+            throw new IllegalArgumentException(
+                    "Lista de reservas não pode ser nula"
+            );
+        }
+
+        GerenciadorReservas gerenciador = new GerenciadorReservas();
+
+        for (Reserva reserva : reservasSalvas) {
+            if (reserva == null) {
+                throw new IllegalArgumentException("Reserva nula");
+            }
+
+            if (reserva.getStatusReserva() != StatusReserva.CANCELADA) {
+                gerenciador.encontrarConflito(
+                        reserva.getQuadra(),
+                        reserva.getPeriodoReserva()
+                ).ifPresent(existente -> {
+                    throw new ConflitoReservaException(existente.getId());
+                });
+            }
+
+            gerenciador.reservas.adicionar(reserva);
+        }
+
+        return gerenciador;
+    }
 }

@@ -1,5 +1,6 @@
 package br.edu.fagammon.poo.dominio;
 
+import br.edu.fagammon.poo.persistencia.ServicoPersistencia;
 import br.edu.fagammon.poo.politica.*;
 import br.edu.fagammon.poo.excecao.ConflitoReservaException;
 import br.edu.fagammon.poo.repositorio.Repositorio;
@@ -7,6 +8,7 @@ import br.edu.fagammon.poo.repositorio.RepositorioEmMemoria;
 import br.edu.fagammon.poo.servico.GerenciadorReservas;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.EnumMap;
@@ -24,11 +26,13 @@ public class Aplicacao {
         Participante p1 = new Participante("01", "Victor");
         Participante p2 = new Participante("02", "Marcos");
         Participante p3 = new Participante("03", "Lucas");
+
         participantes.adicionar(p1);
         participantes.adicionar(p2);
         participantes.adicionar(p3);
         quadras.adicionar(quadra01);
         quadras.adicionar(quadra02);
+        quadras.adicionar(quadra03);
 
         Clock relogio = Clock.systemDefaultZone();
         LocalDate dia = LocalDate.now(relogio).plusDays(3);
@@ -60,21 +64,74 @@ public class Aplicacao {
         Reserva r2 = gerenciador.criarReserva(p2, quadra02, pe2, Modalidade.TENIS,cancelamentoLivre,precoPorModalidade);
         Reserva r3 = gerenciador.criarReserva(p3, quadra03, pe3, Modalidade.SOCIETY,cancelamentoAntecedencia,precoPorModalidade);
 
-//        try {
-//            gerenciador.criarReserva(p2, quadra01, pe1, Modalidade.FUTSAL, cancelamentoLivre,precoPadrao);
-//        } catch (ConflitoReservaException excecao) {
-//            System.out.println("Reserva recusada: " + excecao.getMessage());
-//        }
+
+        PeriodoReserva pe4 = new PeriodoReserva(
+                dia.atTime(16, 0),
+                dia.atTime(17, 0)
+        );
+
+        PeriodoReserva pe5 = new PeriodoReserva(
+                dia.plusDays(1).atTime(10, 0),
+                dia.plusDays(1).atTime(12, 0)
+        );
+
+        Reserva r4 = gerenciador.criarReserva(
+                p1, quadra02, pe4, Modalidade.TENIS,
+                cancelamentoLivre, precoPorModalidade
+        );
+
+        Reserva r5 = gerenciador.criarReserva(
+                p2, quadra03, pe5, Modalidade.SOCIETY,
+                cancelamentoLivre, precoPorModalidade
+        );
+
+
+        try {
+            gerenciador.criarReserva(p2, quadra01, pe1, Modalidade.FUTSAL, cancelamentoLivre,precoFixo);
+        } catch (ConflitoReservaException excecao) {
+            System.out.println("Reserva recusada: " + excecao.getMessage());
+        }
+
+        // Mudança de Status
 //        gerenciador.concluirReserva(r1.getId());
 //        gerenciador.cancelarReserva(r2.getId());
 //        gerenciador.cancelarReserva(r3.getId());
+
+
+
+        // Listagem de reservas
 //        System.out.println("Participantes cadastrados: " + participantes.listar().size());
 //        System.out.println("Quadras cadastradas: " + quadras.listar().size());
 //        System.out.println("Horário liberado após cancelamento: "
 //                + gerenciador.estaDisponivel(quadra01, pe2, Modalidade.FUTSAL));
 //        gerenciador.reservasOrdenadasPorData().forEach(System.out::println);
+//
+//        BigDecimal valor = r3.getPreco();
+//        System.out.println(valor);
 
-        BigDecimal valor = r3.getPreco();
-        System.out.println(valor);
+
+
+        // Persistencia em JSON
+        ServicoPersistencia servico = new ServicoPersistencia();
+
+        Path arquivo = Path.of("dados", "reservas.json");
+
+// Salvar as reservas
+        servico.salvar(gerenciador, arquivo);
+
+        System.out.println("Reservas salvas no JSON!");
+        System.out.println("Total: " + gerenciador.getReservas().size());
+
+// Carregar em uma nova instância
+        GerenciadorReservas restaurado = servico.carregar(arquivo);
+
+        System.out.println("\nReservas recuperadas do JSON:");
+
+        for (Reserva reserva : restaurado.getReservas()) {
+            System.out.println(reserva);
+            System.out.println("Preço: R$ " + reserva.getPreco());
+            System.out.println("-----------------------");
+        }
+
     }
 }

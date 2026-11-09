@@ -227,3 +227,12 @@ Registre decisões que afetem o modelo, a API, as dependências ou a evolução.
 - Decisão: Utilizar Map para listar as modalidades que vão ter preços diferentes dos preços fixos.
 - Consequências: Modalidade Tenis e Society possuem preços por horas diferentes das demais.
 - Teste ou evidência que verifica a decisão: `PrecoPorModalidade`
+
+### Persistência de reservas em JSON
+
+- Data: 09/11/2026
+- Problema observado: As reservas eram armazenadas apenas em memória e perdidas ao encerrar o programa.
+- Alternativas consideradas: Armazenamento em memória, arquivos de texto e JSON.
+- Decisão: Utilizar JSON com a biblioteca Jackson para salvar e recuperar as reservas. A persistência foi separada em classes próprias, mantendo as regras de negócio no domínio.
+- Consequências: Os dados podem ser recuperados após reiniciar a aplicação. Em contrapartida, foi necessário adicionar uma dependência e criar classes para conversão dos dados.
+- Teste ou evidência que verifica a decisão: Testes de salvamento e restauração, JSON inválido, arquivo inexistente, conflitos de horários e preservação do estado das reservas.

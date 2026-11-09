@@ -124,3 +124,13 @@ documentação ou decisões.
 - Resultado aproveitado: Aprendizagem sobre BigDecimal, Map e mais conhecimento sobre polimorfismo e interfaces.
 - Verificações executadas: As implementações foram analisadas e testadas manualmente na classe de aplicacao e nos testes Junit. 
 - Correções ou decisões da equipe: Utilizar essa ajuda para implementar a interface `PoliticaPreco` e as classes `PrecoFixoPorHora`,`PrecoPorModalidade`.
+
+### Uso de IA para compreender e implementar persistência
+
+- Data: 09/11/2026
+- Ferramenta: ChatGPT (OpenAI).
+- Objetivo: Entender o funcionamento do formato JSON e da biblioteca Jackson para implementar persistência em Java.
+- Parte do projeto afetada:** Pacote `persistencia` e testes de persistência.
+- Resultado aproveitado: Explicações sobre JSON, uso do `ObjectMapper` e exemplos de salvamento, leitura e restauração de reservas.
+- Verificações executadas: Execução dos testes JUnit e testes de criação, salvamento e recuperação de reservas em arquivo JSON.
+- Correções ou decisões da equipe: Optamos por salvar apenas as reservas cadastradas e os dados vinculados a elas, mantendo a implementação simples e separada das classes de domínio
