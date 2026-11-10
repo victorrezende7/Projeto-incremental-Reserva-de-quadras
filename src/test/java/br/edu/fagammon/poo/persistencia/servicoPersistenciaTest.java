@@ -238,6 +238,120 @@ class ServicoPersistenciaTest {
         });
     }
 
+    @Test
+    void deveSalvarECarregarListaVazia() {
+        GerenciadorReservas gerenciador = new GerenciadorReservas();
+
+        ServicoPersistencia servico = new ServicoPersistencia();
+
+        Path arquivo = pastaTemporaria.resolve("vazio.json");
+
+        servico.salvar(gerenciador, arquivo);
+
+        GerenciadorReservas restaurado = servico.carregar(arquivo);
+
+        assertTrue(restaurado.getReservas().isEmpty());
+    }
+
+    @Test
+    void deveRestaurarMultiplasReservas() {
+        GerenciadorReservas gerenciador = new GerenciadorReservas();
+
+        Participante participante = new Participante("01", "Joao");
+
+        Quadra quadra = new Quadra(
+                "01", "Quadra de Futsal",
+                EnumSet.of(Modalidade.FUTSAL)
+        );
+
+        PeriodoReserva periodo1 = new PeriodoReserva(
+                LocalDateTime.of(2026, 12, 10, 14, 0),
+                LocalDateTime.of(2026, 12, 10, 15, 0)
+        );
+
+        PeriodoReserva periodo2 = new PeriodoReserva(
+                LocalDateTime.of(2026, 12, 10, 16, 0),
+                LocalDateTime.of(2026, 12, 10, 17, 0)
+        );
+
+        Reserva r1 = gerenciador.criarReserva(
+                participante, quadra, periodo1, Modalidade.FUTSAL,
+                new CancelamentoLivre(),
+                new PrecoFixoPorHora(new BigDecimal("100.00"))
+        );
+
+        Reserva r2 = gerenciador.criarReserva(
+                participante, quadra, periodo2, Modalidade.FUTSAL,
+                new CancelamentoLivre(),
+                new PrecoFixoPorHora(new BigDecimal("100.00"))
+        );
+
+        ServicoPersistencia servico = new ServicoPersistencia();
+
+        Path arquivo = pastaTemporaria.resolve("multiplas.json");
+
+        servico.salvar(gerenciador, arquivo);
+
+        GerenciadorReservas restaurado = servico.carregar(arquivo);
+
+        assertEquals(2, restaurado.getReservas().size());
+
+        assertTrue(restaurado.getReservas().stream()
+                .anyMatch(r -> r.getId().equals(r1.getId())
+                        && r.getPeriodoReserva().equals(periodo1)));
+
+        assertTrue(restaurado.getReservas().stream()
+                .anyMatch(r -> r.getId().equals(r2.getId())
+                        && r.getPeriodoReserva().equals(periodo2)));
+    }
+
+    @Test
+    void naoDeveRestaurarPeriodoInvalido() throws IOException {
+        GerenciadorReservas gerenciador = new GerenciadorReservas();
+
+        Participante participante = new Participante("01", "Joao");
+
+        Quadra quadra = new Quadra(
+                "01", "Quadra de Futsal",
+                EnumSet.of(Modalidade.FUTSAL)
+        );
+
+        PeriodoReserva periodo = new PeriodoReserva(
+                LocalDateTime.of(2026, 12, 10, 14, 0),
+                LocalDateTime.of(2026, 12, 10, 15, 0)
+        );
+
+        gerenciador.criarReserva(
+                participante, quadra, periodo, Modalidade.FUTSAL,
+                new CancelamentoLivre(),
+                new PrecoFixoPorHora(new BigDecimal("100.00"))
+        );
+
+        ServicoPersistencia servico = new ServicoPersistencia();
+
+        Path arquivo = pastaTemporaria.resolve("periodoInvalido.json");
+
+        servico.salvar(gerenciador, arquivo);
+
+        String json = Files.readString(arquivo);
+
+        String inicio = "2026-12-10T14:00";
+        String fim = "2026-12-10T15:00";
+
+        // O período deve ter sido gravado no formato esperado.
+        assertTrue(json.contains(inicio));
+        assertTrue(json.contains(fim));
+
+        // Altera o fim para ser igual ao início.
+        String jsonInvalido = json.replace(fim, inicio);
+
+        Files.writeString(arquivo, jsonInvalido);
+
+        assertThrows(RuntimeException.class, () -> {
+            servico.carregar(arquivo);
+        });
+    }
+
 
 
 }

@@ -236,3 +236,39 @@ Registre decisões que afetem o modelo, a API, as dependências ou a evolução.
 - Decisão: Utilizar JSON com a biblioteca Jackson para salvar e recuperar as reservas. A persistência foi separada em classes próprias, mantendo as regras de negócio no domínio.
 - Consequências: Os dados podem ser recuperados após reiniciar a aplicação. Em contrapartida, foi necessário adicionar uma dependência e criar classes para conversão dos dados.
 - Teste ou evidência que verifica a decisão: Testes de salvamento e restauração, JSON inválido, arquivo inexistente, conflitos de horários e preservação do estado das reservas.
+
+## Separar a serialização do domínio
+- Data: 10/11/2026.
+- Problema: transformar objetos ligados entre si (participantes, quadras, reservas,
+  políticas e estados) em JSON sem acrescentar dependências de Jackson às entidades.
+- Alternativas descartadas: serializar entidades diretamente por anotações Jackson
+  ou manter apenas dados em memória. A primeira acopla o domínio ao formato;
+  a segunda não permite continuidade entre execuções.
+- Decisão implementada: `ServicoPersistencia` coordena o fluxo;
+  `ConversorDadosSistema` faz a adaptação entre entidades e os records de
+  `DadosSistema`; `PersistenciaJson` concentra Jackson, `Path` e I/O.
+- Benefício: regra de negócio isolada, JSON legível, dados restaurados reconstruídos
+  com validações de campos e verificação de conflitos. O fluxo de salvar/carregar
+  não exige que o domínio conheça o formato externo.
+- Custo e limites: mais classes e dependência Jackson; o conversor conhece os
+  tipos concretos de políticas de cancelamento (`LIVRE`/`ANTECEDENCIA`), e
+  novas estratégias exigem suporte explícito. O formato salva apenas cadastros
+  associados a reservas. A política de preço utilizada não é restaurada, somente
+  o preço final. O salvamento não implementa escrita atômica.
+- Evidências: `ServicoPersistenciaTest`, `ConversorDadosSistemaTest`,
+  `Aplicacao` e `diagrama_de_classes_checkpoint2.md`.
+
+### Cálculo de preço por Strategy
+
+- Data: 10/11/2026 (documentação da implementação existente).
+- Problema: calcular valores diferentes sem espalhar `if/else` por modalidade
+  ou alterar a classe `Reserva` quando a regra mudar.
+- Alternativa descartada: calcular o preço diretamente no gerenciador com
+  condicionais de modalidade.
+- Decisão: interface `PoliticaPreco`, implementações `PrecoFixoPorHora` e
+  `PrecoPorModalidade`, selecionadas pelo chamador da criação da reserva.
+- Benefício: regras substituíveis, `BigDecimal` para dinheiro e política
+  de cálculo independente do objeto `Reserva`.
+- Custo: uma interface e objetos adicionais; o histórico persiste somente
+  o valor calculado, não a política original.
+- Evidências: classes em `politica/`, criação em `GerenciadorReservas`.

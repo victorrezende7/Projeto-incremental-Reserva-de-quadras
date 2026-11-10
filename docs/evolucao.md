@@ -142,7 +142,7 @@ Os caminhos Java abaixo partem de `src/main/java/br/edu/fagammon/poo/` ou de
 | `repositorio/RepositorioEmMemoriaTest.java` | Testes |
 | `servico/EvolucaoReservasTest.java` | Testes |
 | `docs/evolucao.md` | Documentação, a partir da raiz |
-| `docs/diagrama_de_classes.md` | Documentação, a partir da raiz |
+| `diagrama_de_classes_checkpoint2.md` | Documentação, a partir da raiz |
 
 | Modificados | Local |
 | --- | --- |
