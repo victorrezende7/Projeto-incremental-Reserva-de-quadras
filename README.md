@@ -310,7 +310,7 @@ O **Checkpoint 3** enfatiza persistência integrada, restauração validada, abs
 
 - **Checkpoint 1:** [commit `968b873`](https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras/commit/968b873d5bb9386d69ec47963f888fc4af754479) — branch `master` (data registrada no README anterior: 16/10/2026).
 - **Checkpoint 2:** [commit `bcef819`](https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras/commit/bcef819c9c4542da963e77a75b96b12702f84daa) — branch `master` (data registrada no README anterior: 31/10/2026).
-- **Checkpoint 3:** registrar o **hash do commit efetivamente submetido** e a branch após a entrega.
+- **Checkpoint 3:** [commit `990a0fe`](https://github.com/victorrezende7/Projeto-incremental-Reserva-de-quadras/commit/990a0fe4c6790d7fe8741c596de51483b26ed605) - branch `master` (data: 10/11/2026).
 
 As datas da tabela são as datas de referência dos **enunciados**, enquanto as datas dos dois commits acima foram transcritas do README incluído no ZIP.
 
